@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mad Food - Delivery Partner Registration</title>
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    
+    <style>
+        /* ───────── RESET & BASE ───────── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            background-attachment: fixed;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background particles */
+        body::before,
+        body::after {
+            content: '';
+            position: fixed;
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: floatBubble 25s infinite alternate ease-in-out;
+        }
+
+        body::before {
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            top: -200px;
+            right: -200px;
+        }
+
+        body::after {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+            bottom: -150px;
+            left: -150px;
+            animation-delay: -12s;
+        }
+
+        @keyframes floatBubble {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            100% { transform: translate(80px, 60px) scale(1.3) rotate(180deg); }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            max-width: 720px;
+            width: 100%;
+            border-radius: 32px;
+            padding: 45px 50px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+            position: relative;
+            z-index: 1;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideUp 0.6s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* ───────── HEADER ───────── */
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+            padding-bottom: 25px;
+            border-bottom: 3px dashed #667eea;
+            position: relative;
+        }
+
+        .header::after {
+            content: '🍔';
+            position: absolute;
+            bottom: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 28px;
+            background: white;
+            padding: 0 15px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .logo-icon {
+            font-size: 45px;
+            color: #667eea;
+            animation: pulse 2.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(-3deg); }
+        }
+
+        .logo h1 {
+            font-size: 38px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #00d2ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        .logo h1 span {
+            font-weight: 300;
+            background: none;
+            -webkit-text-fill-color: #999;
+        }
+
+        .tagline {
+            color: #666;
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+            padding: 0 20px;
+        }
+
+        .tagline i {
+            -webkit-text-fill-color: #667eea;
+            margin: 0 8px;
+        }
+
+        /* ───────── FORM ───────── */
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 8px;
+            letter-spacing: 0.3px;
+        }
+
+        label i {
+            width: 22px;
+            color: #667eea;
+            margin-right: 8px;
+            font-size: 15px;
+        }
+
+        label .required {
+            color: #ff4444;
+            margin-left: 4px;
+        }
+
+        input[type="text"],
+        input[type="file"] {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e8e8e8;
+            border-radius: 14px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: #fafafa;
+            color: #333;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        input::placeholder {
+            color: #aaa;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            transform: scale(1.01);
+        }
+
+        /* ───────── PHONE INPUT ───────── */
+        .phone-wrapper {
+            display: flex;
+            align-items: center;
+            background: #fafafa;
+            border: 2px solid #e8e8e8;
+            border-radius: 14px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .phone-wrapper:focus-within {
+            border-color: #667eea;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .country-code {
+            padding: 14px 12px 14px 18px;
+            font-weight: 700;
+            font-size: 15px;
+            color: #667eea;
+            background: rgba(102, 126, 234, 0.08);
+            border-right: 2px solid #e8e8e8;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .country-code i {
+            font-size: 18px;
+            color: #667eea;
+        }
+
+        .phone-wrapper input[type="tel"] {
+            flex: 1;
+            padding: 14px 18px;
+            border: none;
+            font-size: 15px;
+            background: transparent;
+            color: #333;
+            font-family: 'Poppins', sans-serif;
+            outline: none;
+            min-width: 0;
+        }
+
+        .phone-wrapper input[type="tel"]::placeholder {
+            color: #aaa;
+        }
+
+        /* file inputs */
+        .file-wrapper {
+            position: relative;
+        }
+
+        .file-wrapper input[type="file"] {
+            padding: 12px 16px;
+            cursor: pointer;
+            color: #555;
+            background: #fafafa;
+        }
+
+        .file-wrapper input[type="file"]::file-selector-button {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+            margin-right: 16px;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+        }
+
+        .file-wrapper input[type="file"]::file-selector-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .file-hint {
+            font-size: 12px;
+            color: #888;
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .file-hint i {
+            color: #667eea;
+            font-size: 12px;
+        }
+
+        /* ───────── PREVIEW IMAGES ───────── */
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 14px;
+            margin: 20px 0 12px;
+        }
+
+        .preview-item {
+            background: #fafafa;
+            border-radius: 16px;
+            padding: 14px 10px;
+            text-align: center;
+            border: 2px dashed #e0e0e0;
+            transition: all 0.3s ease;
+            position: relative;
+            min-height: 110px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .preview-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        .preview-item.has-image {
+            border: 2px solid #22c55e;
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.1);
+        }
+
+        .preview-item img {
+            max-width: 100%;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 10px;
+            display: none;
+            margin: 0 auto;
+        }
+
+        .preview-item.has-image img {
+            display: block;
+        }
+
+        .preview-item .placeholder-icon {
+            font-size: 34px;
+            color: #ccc;
+            display: block;
+            padding: 8px 0;
+            transition: color 0.3s ease;
+        }
+
+        .preview-item:hover .placeholder-icon {
+            color: #667eea;
+        }
+
+        .preview-item.has-image .placeholder-icon {
+            display: none;
+        }
+
+        .preview-item .file-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: #888;
+            margin-top: 6px;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .preview-item .badge-uploaded {
+            display: none;
+            font-size: 10px;
+            color: #22c55e;
+            margin-top: 4px;
+            font-weight: 700;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .preview-item.has-image .badge-uploaded {
+            display: block;
+        }
+
+        /* ───────── SUBMIT ───────── */
+        .btn-submit {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #00d2ff 100%);
+            background-size: 200% 200%;
+            color: #fff;
+            border: none;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 14px;
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 25px rgba(102, 126, 234, 0.3);
+            animation: gradientShift 4s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .btn-submit:hover {
+            transform: scale(1.02) translateY(-2px);
+            box-shadow: 0 8px 40px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-submit:active {
+            transform: scale(0.97);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+            animation: none;
+        }
+
+        .btn-submit i {
+            font-size: 20px;
+        }
+
+        /* ───────── TOAST / SUCCESS ───────── */
+        .toast {
+            display: none;
+            margin-top: 24px;
+            padding: 20px 24px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border: 2px solid #22c55e;
+            color: #166534;
+            font-weight: 600;
+            align-items: center;
+            gap: 16px;
+            animation: slideIn 0.5s ease;
+        }
+
+        .toast.show {
+            display: flex;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .toast i {
+            font-size: 32px;
+            color: #22c55e;
+        }
+
+        .toast .toast-text {
+            flex: 1;
+        }
+
+        .toast .toast-text small {
+            font-weight: 400;
+            color: #15803d;
+            display: block;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        /* ───────── RESPONSIVE ───────── */
+        @media (max-width: 600px) {
+            .container {
+                padding: 28px 20px;
+                border-radius: 24px;
+            }
+            
+            .logo h1 {
+                font-size: 28px;
+            }
+            
+            .logo-icon {
+                font-size: 35px;
+            }
+            
+            .preview-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            
+            .btn-submit {
+                font-size: 15px;
+                padding: 16px;
+            }
+            
+            .header {
+                margin-bottom: 25px;
+                padding-bottom: 20px;
+            }
+
+            .country-code {
+                padding: 12px 8px 12px 14px;
+                font-size: 14px;
+            }
+
+            .phone-wrapper input[type="tel"] {
+                padding: 12px 14px;
+                font-size: 14px;
+            }
+
+            .header::after {
+                font-size: 22px;
+                bottom: -16px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .preview-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .container {
+                padding: 20px 14px;
+                border-radius: 20px;
+            }
+            
+            input[type="text"],
+            input[type="file"] {
+                padding: 12px 14px;
+                font-size: 14px;
+            }
+
+            .country-code {
+                padding: 10px 6px 10px 12px;
+                font-size: 13px;
+            }
+
+            .phone-wrapper input[type="tel"] {
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+
+            .logo h1 {
+                font-size: 24px;
+            }
+        }
+
+        /* ───────── SCROLL BAR ───────── */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f5f5f5;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #5a6fd6, #6a3f8a);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- HEADER -->
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-utensils logo-icon"></i>
+                <h1>Mad<span>Food</span></h1>
+            </div>
+            <div class="tagline">
+                <i class="fas fa-motorcycle"></i>
+                Become a Delivery Partner
+                <i class="fas fa-motorcycle"></i>
+            </div>
+        </div>
+
+        <!-- FORM -->
+        <form id="recruitmentForm" novalidate>
+
+            <!-- 1. Full Name -->
+            <div class="form-group">
+                <label for="fullName">
+                    <i class="fas fa-user"></i> Full Name <span class="required">*</span>
+                </label>
+                <input type="text" id="fullName" placeholder="Enter your full name" required />
+            </div>
+
+            <!-- 2. Phone Number with +91 -->
+            <div class="form-group">
+                <label for="phone">
+                    <i class="fas fa-phone"></i> Phone Number <span class="required">*</span>
+                </label>
+                <div class="phone-wrapper">
+                    <span class="country-code">
+                        <i class="fas fa-flag"></i> +91
+                    </span>
+                    <input type="tel" id="phone" placeholder="9876543210" required maxlength="10" />
+                </div>
+                <div class="file-hint" style="margin-top: 6px;">
+                    <i class="fas fa-info-circle"></i> Enter 10-digit mobile number
+                </div>
+            </div>
+
+            <!-- 3. Photo -->
+            <div class="form-group">
+                <label for="photo">
+                    <i class="fas fa-camera"></i> Profile Photo <span class="required">*</span>
+                </label>
+                <div class="file-wrapper">
+                    <input type="file" id="photo" accept="image/*" required />
+                </div>
+                <div class="file-hint">
+                    <i class="fas fa-info-circle"></i> Upload a clear passport-size photo (JPG/PNG)
+                </div>
+            </div>
+
+            <!-- 4. License -->
+            <div class="form-group">
+                <label for="license">
+                    <i class="fas fa-id-card"></i> Driving License <span class="required">*</span>
+                </label>
+                <div class="file-wrapper">
+                    <input type="file" id="license" accept="image/*" required />
+                </div>
+                <div class="file-hint">
+                    <i class="fas fa-info-circle"></i> Front side of your driving license
+                </div>
+            </div>
+
+            <!-- 5. RC -->
+            <div class="form-group">
+                <label for="rc">
+                    <i class="fas fa-car"></i> RC (Registration Certificate) <span class="required">*</span>
+                </label>
+                <div class="file-wrapper">
+                    <input type="file" id="rc" accept="image/*" required />
+                </div>
+                <div class="file-hint">
+                    <i class="fas fa-info-circle"></i> Vehicle registration certificate
+                </div>
+            </div>
+
+            <!-- 6. Aadhar -->
+            <div class="form-group">
+                <label for="aadhar">
+                    <i class="fas fa-id-card"></i> Aadhar Card <span class="required">*</span>
+                </label>
+                <div class="file-wrapper">
+                    <input type="file" id="aadhar" accept="image/*" required />
+                </div>
+                <div class="file-hint">
+                    <i class="fas fa-info-circle"></i> Clear photo of your Aadhar card (front)
+                </div>
+            </div>
+
+            <!-- PREVIEW SECTION -->
+            <div class="preview-grid" id="previewGrid">
+                <!-- populated by JS -->
+            </div>
+
+            <!-- SUBMIT -->
+            <button type="submit" class="btn-submit">
+                <i class="fas fa-paper-plane"></i> Submit Application
+            </button>
+
+        </form>
+
+        <!-- SUCCESS TOAST -->
+        <div class="toast" id="toast">
+            <i class="fas fa-check-circle"></i>
+            <div class="toast-text">
+                Application Submitted Successfully! 🎉
+                <small>Mad Food team will review your application within 24 hours</small>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ───────────────────────────────────────────────
+        // 1. CONFIG
+        // ───────────────────────────────────────────────
+        const FILES_CONFIG = [
+            { id: 'photo',   label: 'Profile Photo' },
+            { id: 'license', label: 'License'       },
+            { id: 'rc',      label: 'RC'            },
+            { id: 'aadhar',  label: 'Aadhar'        },
+        ];
+
+        // ───────────────────────────────────────────────
+        // 2. BUILD PREVIEW ITEMS
+        // ───────────────────────────────────────────────
+        const grid = document.getElementById('previewGrid');
+
+        FILES_CONFIG.forEach((item) => {
+            const div = document.createElement('div');
+            div.className = 'preview-item';
+            div.id = `preview-${item.id}`;
+
+            div.innerHTML = `
+                <span class="placeholder-icon"><i class="fas fa-cloud-upload-alt"></i></span>
+                <img id="img-${item.id}" src="" alt="${item.label}" />
+                <span class="file-label">${item.label}</span>
+                <span class="badge-uploaded"><i class="fas fa-check-circle"></i> Uploaded</span>
+            `;
+
+            grid.appendChild(div);
+        });
+
+        // ───────────────────────────────────────────────
+        // 3. LIVE PREVIEW
+        // ───────────────────────────────────────────────
+        FILES_CONFIG.forEach(({ id, label }) => {
+            const input = document.getElementById(id);
+            const previewDiv = document.getElementById(`preview-${id}`);
+            const img = document.getElementById(`img-${id}`);
+
+            input.addEventListener('change', function () {
+                const file = this.files[0];
+                if (!file) {
+                    previewDiv.classList.remove('has-image');
+                    img.src = '';
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    img.src = e.target.result;
+                    previewDiv.classList.add('has-image');
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        // ───────────────────────────────────────────────
+        // 4. PHONE INPUT VALIDATION
+        // ───────────────────────────────────────────────
+        const phoneInput = document.getElementById('phone');
+        phoneInput.addEventListener('input', function () {
+            this.value = this.value.replace(/\D/g, '');
+            if (this.value.length > 10) {
+                this.value = this.value.slice(0, 10);
+            }
+        });
+
+        // ───────────────────────────────────────────────
+        // 5. FORM SUBMISSION
+        // ───────────────────────────────────────────────
+        const form = document.getElementById('recruitmentForm');
+        const toast = document.getElementById('toast');
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const name = document.getElementById('fullName').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+
+            if (phone.length !== 10) {
+                alert('Please enter a valid 10-digit phone number.');
+                document.getElementById('phone').focus();
+                return;
+            }
+
+            let allFilesSelected = true;
+            const fileInputs = ['photo', 'license', 'rc', 'aadhar'];
+            fileInputs.forEach((id) => {
+                const inp = document.getElementById(id);
+                if (inp.files.length === 0) {
+                    allFilesSelected = false;
+                    inp.style.borderColor = '#ff4444';
+                    inp.style.boxShadow = '0 0 0 4px rgba(255,68,68,0.15)';
+                } else {
+                    inp.style.borderColor = '#e8e8e8';
+                    inp.style.boxShadow = 'none';
+                }
+            });
+
+            if (!name) {
+                alert('Please enter your full name.');
+                return;
+            }
+
+            if (!allFilesSelected) {
+                alert('Please upload all required documents:\n• Profile Photo\n• Driving License\n• RC Certificate\n• Aadhar Card');
+                return;
+            }
+
+            // Build FormData
+            const formData = new FormData();
+            formData.append('fullName', name);
+            formData.append('phone', `+91${phone}`);
+            formData.append('source', 'Mad Food Delivery Partner');
+            fileInputs.forEach((id) => {
+                const inp = document.getElementById(id);
+                if (inp.files.length > 0) {
+                    formData.append(id, inp.files[0]);
+                }
+            });
+
+            // Log for demo
+            console.log('📦 Mad Food - Delivery Partner Application:');
+            console.log('─────────────────────────────────────────');
+            for (let [key, value] of formData.entries()) {
+                if (value instanceof File) {
+                    console.log(`  📎 ${key}: ${value.name} (${(value.size / 1024).toFixed(1)} KB)`);
+                } else {
+                    console.log(`  📝 ${key}: ${value}`);
+                }
+            }
+            console.log('─────────────────────────────────────────');
+            console.log('✅ Application submitted to Mad Food admin!');
+
+            // Show success
+            toast.classList.add('show');
+            toast.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            const btn = document.querySelector('.btn-submit');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+            
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Application';
+            }, 3000);
+        });
+
+        // ───────────────────────────────────────────────
+        // 6. Remove error styling on file change
+        // ───────────────────────────────────────────────
+        ['photo', 'license', 'rc', 'aadhar'].forEach((id) => {
+            document.getElementById(id).addEventListener('change', function () {
+                this.style.borderColor = '#e8e8e8';
+                this.style.boxShadow = 'none';
+            });
+        });
+    </script>
+
+</body>
+</html>
