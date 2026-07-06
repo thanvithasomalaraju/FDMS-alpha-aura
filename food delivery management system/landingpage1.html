@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,7 +29,6 @@
             --cream: #FBF5F0;
             --eggshell: #C9CDCA;
             --olive: #78892C;
-            --burnt-umber: #4C389F;
             --glass-bg: rgba(255, 245, 240, 0.25);
             --glass-border: rgba(255, 255, 255, 0.3);
             --text-dark: #2d2a24;
@@ -152,6 +152,7 @@
             display: flex;
             gap: 32px;
             font-weight: 500;
+            align-items: center;
         }
         .nav-links a {
             text-decoration: none;
@@ -170,6 +171,30 @@
             transition: 0.3s;
         }
         .nav-links a:hover::after { width: 100%; }
+
+        /* Admin Login button in navbar - Direct link to admin panel */
+        .nav-links .admin-login-btn {
+            color: var(--primary);
+            font-weight: 700;
+            padding: 8px 20px;
+            border-radius: 30px;
+            border: 2px solid var(--primary);
+            transition: all 0.3s ease;
+            background: transparent;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .nav-links .admin-login-btn:hover {
+            background: var(--primary);
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(226, 147, 154, 0.3);
+        }
+
+        .nav-links .admin-login-btn::after {
+            display: none;
+        }
 
         .nav-actions {
             display: flex;
@@ -286,13 +311,13 @@
         /* ===== ROLE GRID ===== */
         .role-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 30px;
-            max-width: 1100px;
+            max-width: 900px;
             margin: 0 auto;
             padding: 20px 0;
         }
-        @media (max-width: 900px) { .role-grid { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 768px) { .role-grid { grid-template-columns: 1fr 1fr; } }
         @media (max-width: 500px) { .role-grid { grid-template-columns: 1fr; } }
 
         .role-card {
@@ -307,7 +332,15 @@
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            text-decoration: none;
+            color: var(--text-dark);
+            display: block;
         }
+
+        .dark .role-card {
+            color: var(--text-light);
+        }
+
         .role-card::before {
             content: '';
             position: absolute;
@@ -335,170 +368,6 @@
         }
         .role-card h3 { font-size: 1.5rem; font-weight: 600; margin-bottom: 8px; }
         .role-card p { opacity: 0.7; font-size: 0.95rem; margin-bottom: 18px; }
-
-        /* ===== MODAL (AUTH) ===== */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        .modal {
-            background: var(--cream);
-            border-radius: 40px;
-            padding: 45px 40px;
-            max-width: 480px;
-            width: 90%;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.2);
-            position: relative;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .dark .modal {
-            background: #1e1b18;
-            border-color: rgba(255, 255, 255, 0.05);
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 16px;
-            right: 20px;
-            font-size: 1.8rem;
-            color: #7a829b;
-            cursor: pointer;
-            transition: 0.3s;
-            background: none;
-            border: none;
-        }
-
-        .modal-close:hover {
-            color: var(--primary);
-            transform: rotate(90deg);
-        }
-
-        .modal h2 {
-            text-align: center;
-            font-size: 1.8rem;
-            margin-bottom: 8px;
-        }
-
-        .modal .subtitle {
-            text-align: center;
-            opacity: 0.6;
-            margin-bottom: 24px;
-            font-size: 0.95rem;
-        }
-
-        .modal .form-group {
-            margin-bottom: 16px;
-            text-align: left;
-        }
-
-        .modal .form-group label {
-            display: block;
-            font-weight: 500;
-            font-size: 0.9rem;
-            margin-bottom: 4px;
-            opacity: 0.8;
-        }
-
-        .modal .form-group input {
-            width: 100%;
-            padding: 14px 18px;
-            border-radius: 30px;
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            background: rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(4px);
-            font-size: 1rem;
-            transition: 0.3s;
-            color: inherit;
-        }
-
-        .dark .modal .form-group input {
-            background: rgba(30, 27, 24, 0.6);
-            border-color: rgba(255, 255, 255, 0.08);
-            color: var(--text-light);
-        }
-
-        .modal .form-group input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(226, 147, 154, 0.15);
-        }
-
-        .modal .form-group input::placeholder {
-            opacity: 0.5;
-        }
-
-        .modal .switch-link {
-            text-align: center;
-            margin-top: 16px;
-            font-size: 0.9rem;
-            opacity: 0.7;
-        }
-
-        .modal .switch-link span {
-            color: var(--primary);
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-
-        .modal .switch-link span:hover {
-            text-decoration: underline;
-        }
-
-        .modal .btn-block {
-            width: 100%;
-            padding: 14px;
-            margin-top: 8px;
-            font-size: 1rem;
-        }
-
-        .form-divider {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin: 20px 0;
-        }
-        .form-divider::before,
-        .form-divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: rgba(0, 0, 0, 0.08);
-        }
-        .dark .form-divider::before,
-        .dark .form-divider::after {
-            background: rgba(255, 255, 255, 0.08);
-        }
 
         /* ===== RIPPLE EFFECT ===== */
         .ripple {
@@ -558,6 +427,18 @@
             cursor: pointer;
         }
         .footer-col a:hover { opacity: 1; color: var(--primary); }
+        .footer-col .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 6px 0;
+            opacity: 0.7;
+            font-size: 0.95rem;
+        }
+        .footer-col .contact-item i {
+            color: var(--primary);
+            width: 20px;
+        }
         .social-icons i {
             font-size: 1.6rem;
             margin-right: 14px;
@@ -592,12 +473,156 @@
         @media (max-width: 768px) {
             .hero { flex-direction: column; text-align: center; min-height: auto; padding: 30px 0; }
             .hero-text p { margin-left: auto; margin-right: auto; }
-            .modal { padding: 30px 20px; }
+            .role-grid { grid-template-columns: 1fr 1fr; }
         }
         @media (max-width: 480px) {
             .app { padding: 0 16px 20px; }
-            .modal { padding: 24px 16px; }
             .role-card { padding: 24px 16px; }
+            .role-grid { grid-template-columns: 1fr; }
+        }
+
+        /* ===== PAGE SYSTEM ===== */
+        .page {
+            display: none;
+            animation: fadeSlide 0.5s ease;
+        }
+        .page.active { display: block; }
+
+        @keyframes fadeSlide {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== CARD GRID FOR FEATURES ===== */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .card-grid .glass {
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .card-grid .glass i {
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+        .card-grid .glass h4 {
+            margin-top: 12px;
+        }
+
+        /* ===== ABOUT PAGE EXPANDED STYLES ===== */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 40px 0;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .about-grid .about-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius);
+            padding: 30px 28px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+            transition: all 0.35s ease;
+            text-align: left;
+        }
+
+        .about-grid .about-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.06);
+        }
+
+        .about-grid .about-card .icon {
+            font-size: 2.8rem;
+            margin-bottom: 12px;
+            display: block;
+            color: var(--primary);
+        }
+
+        .about-grid .about-card h4 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+
+        .dark .about-grid .about-card h4 {
+            color: var(--text-light);
+        }
+
+        .about-grid .about-card p {
+            color: var(--text-dark);
+            opacity: 0.75;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .dark .about-grid .about-card p {
+            color: var(--text-light);
+        }
+
+        .about-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            max-width: 900px;
+            margin: 40px auto 20px;
+        }
+
+        .about-stats .stat {
+            background: var(--glass-bg);
+            backdrop-filter: blur(8px);
+            padding: 20px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .about-stats .stat:hover {
+            transform: translateY(-4px) scale(1.02);
+            border-color: var(--primary);
+        }
+
+        .about-stats .stat .number {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .about-stats .stat .label {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
+            .about-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .about-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== HERO BUTTON ===== */
+        .hero-btn {
+            display: inline-block;
         }
     </style>
 </head>
@@ -629,7 +654,7 @@
                 <a data-page="home">Home</a>
                 <a data-page="about">About</a>
                 <a data-page="features">Features</a>
-                <a id="navLoginBtn" style="color: var(--primary); font-weight: 600;">Login</a>
+                <a href="admin/admin1.html" class="admin-login-btn"><i class="fas fa-user-shield"></i> Login</a>
             </div>
             <div class="nav-actions">
                 <button class="dark-toggle" id="darkToggle"><i class="fas fa-moon"></i></button>
@@ -645,7 +670,7 @@
                 <div class="hero-text">
                     <h1>Mad Food · Partner Portal</h1>
                     <p>One platform connecting Restaurants, Delivery Partners, and Administrators.</p>
-                    <button class="btn" id="getStartedBtn"><i class="fas fa-rocket"></i> Get Started</button>
+                    <button class="btn hero-btn" id="getStartedBtn"><i class="fas fa-rocket"></i> Get Started</button>
                 </div>
                 <div class="hero-illustration"><i class="fas fa-utensil-spoon"></i></div>
             </div>
@@ -660,47 +685,107 @@
                 <p style="opacity:0.7;font-size:1.1rem;">Select how you want to use the Mad Food Partner Portal.</p>
             </div>
             <div class="role-grid">
+
                 <!-- CUSTOMER -->
-                <div class="role-card ripple" data-role="customer" data-panel="customer/newone.html">
+                <a href="customer/newone.html" class="role-card ripple">
                     <span class="icon-wrap">👤</span>
                     <h3>Customer</h3>
                     <p>Browse restaurants, order food, track deliveries.</p>
-                    <button class="btn role-btn">Continue</button>
-                </div>
+                    <button class="btn">Continue</button>
+                </a>
 
                 <!-- RESTAURANT -->
-                <div class="role-card ripple" data-role="restaurant" data-panel="restaurant/deepseek_html_20260626_b410ce (1).html">
+                <a href="restaurant/deepseek_html_20260626_b410ce (1).html" class="role-card ripple">
                     <span class="icon-wrap">🍽️</span>
                     <h3>Restaurant</h3>
                     <p>Manage your restaurant, menu, incoming orders.</p>
-                    <button class="btn role-btn">Continue</button>
-                </div>
+                    <button class="btn">Continue</button>
+                </a>
 
                 <!-- DELIVERY -->
-                <div class="role-card ripple" data-role="delivery" data-panel="delivery/deepseek_html_20260625_e8121b.html">
+                <a href="delivery/deepseek_html_20260625_e8121b.html" class="role-card ripple">
                     <span class="icon-wrap">🛵</span>
                     <h3>Delivery</h3>
                     <p>Accept deliveries, navigate routes, update status.</p>
-                    <button class="btn role-btn">Continue</button>
-                </div>
+                    <button class="btn">Continue</button>
+                </a>
 
-                <!-- ADMIN -->
-                <div class="role-card ripple" data-role="admin" data-panel="admin/admin1.html">
-                    <span class="icon-wrap">🔐</span>
-                    <h3>Admin</h3>
-                    <p>Manage platform, users, and analytics.</p>
-                    <button class="btn role-btn">Continue</button>
-                </div>
             </div>
         </div>
 
         <!-- ============================================ -->
-        <!-- ===== PAGE: ABOUT ===== -->
+        <!-- ===== PAGE: ABOUT (EXPANDED) ===== -->
         <!-- ============================================ -->
         <div class="page" id="page-about">
-            <div style="text-align:center;padding:60px 0;">
+            <div style="text-align:center;padding:50px 0 10px;">
                 <h2 style="font-size:2.8rem;">About Mad Food</h2>
-                <p style="max-width:600px;margin:20px auto;opacity:0.7;font-size:1.1rem;">We're on a mission to connect food lovers with their favorite meals, delivered with speed and care.</p>
+                <p style="max-width:600px;margin:16px auto;opacity:0.7;font-size:1.1rem;line-height:1.7;">
+                    We're on a mission to connect food lovers with their favorite meals, 
+                    delivered with speed and care.
+                </p>
+            </div>
+
+            <!-- About Stats -->
+            <div class="about-stats">
+                <div class="stat">
+                    <div class="number">50+</div>
+                    <div class="label">Partner Restaurants</div>
+                </div>
+                <div class="stat">
+                    <div class="number">100+</div>
+                    <div class="label">Delivery Partners</div>
+                </div>
+                <div class="stat">
+                    <div class="number">10K+</div>
+                    <div class="label">Happy Customers</div>
+                </div>
+                <div class="stat">
+                    <div class="number">4.8</div>
+                    <div class="label">Average Rating ⭐</div>
+                </div>
+            </div>
+
+            <!-- About Grid -->
+            <div class="about-grid">
+                <div class="about-card">
+                    <span class="icon">🚀</span>
+                    <h4>Our Vision</h4>
+                    <p>To revolutionize the food delivery ecosystem in India by creating a seamless, reliable, and delightful experience for customers, restaurants, and delivery partners alike.</p>
+                </div>
+                <div class="about-card">
+                    <span class="icon">💡</span>
+                    <h4>Our Mission</h4>
+                    <p>Empowering local restaurants and delivery partners with technology that simplifies operations, increases reach, and delivers exceptional value to every stakeholder.</p>
+                </div>
+                <div class="about-card">
+                    <span class="icon">👥</span>
+                    <h4>Our Team</h4>
+                    <p>Passionate foodies, tech enthusiasts, and logistics experts working together to build India's most trusted food delivery platform. We believe in innovation, integrity, and impact.</p>
+                </div>
+                <div class="about-card">
+                    <span class="icon">🌍</span>
+                    <h4>Our Impact</h4>
+                    <p>From supporting local businesses to reducing food waste and creating employment opportunities, we're committed to making a positive difference in the communities we serve.</p>
+                </div>
+                <div class="about-card" style="grid-column: span 2;">
+                    <span class="icon">⭐</span>
+                    <h4>Why Mad Food?</h4>
+                    <p>
+                        <strong>🛡️ Quality Assurance</strong> — Every order is prepared with care and delivered with precision.<br />
+                        <strong>⚡ Real-time Tracking</strong> — Know exactly where your food is, every step of the way.<br />
+                        <strong>💳 Multiple Payment Options</strong> — Choose what works best for you — COD, UPI, Cards, and more.<br />
+                        <strong>📊 Analytics Dashboard</strong> — For restaurant partners: track sales, customer preferences, and growth metrics.<br />
+                        <strong>🤝 Partner-Centric</strong> — We prioritize the success of our restaurant and delivery partners.
+                    </p>
+                </div>
+            </div>
+
+            <div style="text-align:center;margin:30px 0 20px;padding:20px;background:var(--glass-bg);border-radius:var(--radius);border:1px solid var(--glass-border);max-width:800px;margin-left:auto;margin-right:auto;">
+                <p style="font-size:1.05rem;font-weight:600;opacity:0.8;">
+                    <i class="fas fa-quote-left" style="color:var(--primary);margin-right:8px;"></i>
+                    Good food is the foundation of genuine happiness. We're here to make it accessible to everyone.
+                    <i class="fas fa-quote-right" style="color:var(--primary);margin-left:8px;"></i>
+                </p>
             </div>
         </div>
 
@@ -710,10 +795,10 @@
         <div class="page" id="page-features">
             <div style="text-align:center;padding:60px 0;">
                 <h2 style="font-size:2.8rem;">Features</h2>
-                <div class="card-grid" style="margin-top:40px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px;max-width:900px;margin:40px auto;">
-                    <div class="glass" style="padding:30px 20px;text-align:center;"><i class="fas fa-mobile-alt" style="font-size:2.5rem;color:var(--primary);"></i><h4 style="margin-top:12px;">Real-time Tracking</h4></div>
-                    <div class="glass" style="padding:30px 20px;text-align:center;"><i class="fas fa-credit-card" style="font-size:2.5rem;color:var(--primary);"></i><h4 style="margin-top:12px;">Multiple Payments</h4></div>
-                    <div class="glass" style="padding:30px 20px;text-align:center;"><i class="fas fa-chart-line" style="font-size:2.5rem;color:var(--primary);"></i><h4 style="margin-top:12px;">Analytics Dashboard</h4></div>
+                <div class="card-grid" style="margin-top:40px;">
+                    <div class="glass"><i class="fas fa-mobile-alt"></i><h4>Real-time Tracking</h4></div>
+                    <div class="glass"><i class="fas fa-credit-card"></i><h4>Multiple Payments</h4></div>
+                    <div class="glass"><i class="fas fa-chart-line"></i><h4>Analytics Dashboard</h4></div>
                 </div>
             </div>
         </div>
@@ -722,13 +807,35 @@
         <!-- ===== FOOTER ===== -->
         <!-- ============================================ -->
         <footer class="footer">
-            <div class="footer-col"><h4><i class="fas fa-leaf" style="color:var(--primary);"></i> Mad Food</h4><p style="opacity:0.6;font-size:0.9rem;">Partner Portal</p></div>
-            <div class="footer-col"><h4>About</h4><a data-page="about">Team</a></div>
-            <div class="footer-col"><h4>Contact</h4><a href="#">help@madfood.com</a></div>
-            <div class="footer-col"><h4>Follow</h4>
+            <div class="footer-col">
+                <h4><i class="fas fa-leaf" style="color:var(--primary);"></i> Mad Food</h4>
+                <p style="opacity:0.6;font-size:0.9rem;">Partner Portal</p>
+            </div>
+            <div class="footer-col">
+                <h4>About</h4>
+                <a data-page="about">Our Story</a>
+                <a data-page="about">Team</a>
+                <a data-page="about">Mission</a>
+            </div>
+            <div class="footer-col">
+                <h4>Contact</h4>
+                <a href="#">help@madfood.com</a>
+                <div class="contact-item">
+                    <i class="fas fa-phone"></i>
+                    <span>+91 98765 43210</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-whatsapp"></i>
+                    <span>+91 98765 43211</span>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Follow</h4>
                 <div class="social-icons">
                     <i class="fab fa-instagram"></i>
                     <i class="fab fa-twitter"></i>
+                    <i class="fab fa-youtube"></i>
+                    <i class="fab fa-facebook"></i>
                 </div>
             </div>
             <div class="footer-col" style="flex:1 1 100%;text-align:center;opacity:0.5;font-size:0.85rem;padding-top:20px;border-top:1px solid rgba(255,215,200,0.1);">
@@ -739,60 +846,6 @@
 
     <!-- ===== SCROLL TO TOP ===== -->
     <button class="scroll-top" id="scrollTop"><i class="fas fa-arrow-up"></i></button>
-
-    <!-- ============================================================ -->
-    <!-- ===== MODAL: LOGIN ===== -->
-    <!-- ============================================================ -->
-    <div class="modal-overlay" id="loginModal">
-        <div class="modal">
-            <button class="modal-close" id="closeLoginModal">&times;</button>
-            <h2>Welcome Back</h2>
-            <p class="subtitle">Login to your account</p>
-            <form id="loginForm">
-                <div class="form-group">
-                    <label>Email Address</label>
-                    <input type="email" placeholder="you@example.com" required />
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" placeholder="••••••••" required />
-                </div>
-                <button type="submit" class="btn btn-block">Login</button>
-                <div class="switch-link">
-                    Don't have an account? <span id="switchToRegister">Register</span>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- ============================================================ -->
-    <!-- ===== MODAL: REGISTER ===== -->
-    <!-- ============================================================ -->
-    <div class="modal-overlay" id="registerModal">
-        <div class="modal">
-            <button class="modal-close" id="closeRegisterModal">&times;</button>
-            <h2>Create Account</h2>
-            <p class="subtitle">Join the Mad Food community</p>
-            <form id="registerForm">
-                <div class="form-group">
-                    <label>Full Name</label>
-                    <input type="text" placeholder="John Doe" required />
-                </div>
-                <div class="form-group">
-                    <label>Email Address</label>
-                    <input type="email" placeholder="you@example.com" required />
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" placeholder="Create a strong password" required />
-                </div>
-                <button type="submit" class="btn btn-block">Register</button>
-                <div class="switch-link">
-                    Already have an account? <span id="switchToLogin">Login</span>
-                </div>
-            </form>
-        </div>
-    </div>
 
     <!-- ============================================================ -->
     <!-- ===== JAVASCRIPT ===== -->
@@ -886,7 +939,6 @@
                 navLinks.classList.remove('open');
             }
 
-            // Nav links
             document.querySelectorAll('.nav-links a[data-page]').forEach(a => {
                 a.addEventListener('click', () => {
                     const page = a.dataset.page;
@@ -896,12 +948,10 @@
                 });
             });
 
-            // Logo click
             document.getElementById('logo').addEventListener('click', () => {
                 showPage('page-home');
             });
 
-            // Footer nav links
             document.querySelectorAll('.footer-col a[data-page]').forEach(a => {
                 a.addEventListener('click', () => {
                     const page = a.dataset.page;
@@ -911,126 +961,12 @@
                 });
             });
 
-            // ============================================================
-            // 7. MODAL LOGIC (Login / Register)
-            // ============================================================
-            const loginModal = document.getElementById('loginModal');
-            const registerModal = document.getElementById('registerModal');
-            const openLoginBtn = document.getElementById('navLoginBtn');
-            const closeLoginBtn = document.getElementById('closeLoginModal');
-            const closeRegisterBtn = document.getElementById('closeRegisterModal');
-            const switchToRegister = document.getElementById('switchToRegister');
-            const switchToLogin = document.getElementById('switchToLogin');
-
-            // Get Started button opens role selection
             document.getElementById('getStartedBtn').addEventListener('click', () => {
                 showPage('page-role');
             });
 
-            function openModal(modal) {
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-
-            function closeModal(modal) {
-                modal.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-
-            // Open login from nav
-            openLoginBtn.addEventListener('click', () => openModal(loginModal));
-
-            // Close modals
-            closeLoginBtn.addEventListener('click', () => closeModal(loginModal));
-            closeRegisterBtn.addEventListener('click', () => closeModal(registerModal));
-
-            // Close on overlay click
-            loginModal.addEventListener('click', (e) => {
-                if (e.target === loginModal) closeModal(loginModal);
-            });
-            registerModal.addEventListener('click', (e) => {
-                if (e.target === registerModal) closeModal(registerModal);
-            });
-
-            // Switch between modals
-            switchToRegister.addEventListener('click', () => {
-                closeModal(loginModal);
-                openModal(registerModal);
-            });
-            switchToLogin.addEventListener('click', () => {
-                closeModal(registerModal);
-                openModal(loginModal);
-            });
-
             // ============================================================
-            // 8. ROLE CARD NAVIGATION (Opens Panel HTML)
-            // ============================================================
-            const roleCards = document.querySelectorAll('.role-card');
-
-            roleCards.forEach(card => {
-                const btn = card.querySelector('.role-btn');
-
-                const handleRoleClick = function(e) {
-                    e.stopPropagation();
-                    const panelPath = this.getAttribute('data-panel');
-                    const roleName = this.getAttribute('data-role');
-
-                    if (panelPath) {
-                        // Visual feedback
-                        this.style.transition = 'transform 0.15s ease';
-                        this.style.transform = 'scale(0.95)';
-
-                        setTimeout(() => {
-                            try {
-                                window.location.href = panelPath;
-                            } catch (error) {
-                                alert('❌ Error opening ' + roleName + ' panel.\nPlease check if the file exists at:\n' + panelPath);
-                                console.error('Navigation error:', error);
-                                this.style.transform = '';
-                            }
-                        }, 120);
-                    } else {
-                        alert('⚠️ No panel file defined for ' + roleName);
-                    }
-                };
-
-                btn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    handleRoleClick.call(card, e);
-                });
-
-                card.addEventListener('click', function(e) {
-                    handleRoleClick.call(this, e);
-                });
-            });
-
-            // ============================================================
-            // 9. FORM SUBMISSIONS
-            // ============================================================
-            document.getElementById('loginForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                alert('🔐 Login functionality will be connected to backend.');
-                closeModal(loginModal);
-            });
-
-            document.getElementById('registerForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                alert('📝 Registration functionality will be connected to backend.');
-                closeModal(registerModal);
-            });
-
-            // ============================================================
-            // 10. KEYBOARD SHORTCUT: ESC to close modals
-            // ============================================================
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    if (loginModal.classList.contains('active')) closeModal(loginModal);
-                    if (registerModal.classList.contains('active')) closeModal(registerModal);
-                }
-            });
-
-            // ============================================================
-            // 11. RIPPLE EFFECT
+            // 7. RIPPLE EFFECT
             // ============================================================
             document.querySelectorAll('.ripple').forEach(el => {
                 el.addEventListener('click', function(e) {
@@ -1055,7 +991,6 @@
                 });
             });
 
-            // Add rippleAnim keyframe dynamically
             const styleSheet = document.createElement("style");
             styleSheet.textContent = `
                 @keyframes rippleAnim {
@@ -1065,7 +1000,7 @@
             document.head.appendChild(styleSheet);
 
             // ============================================================
-            // 12. RESPONSIVE: close nav on resize
+            // 8. RESPONSIVE
             // ============================================================
             window.addEventListener('resize', () => {
                 if (window.innerWidth > 820) {
@@ -1073,9 +1008,11 @@
                 }
             });
 
-            // ============================================================
             console.log('🍽️ Mad Food · Partner Portal loaded.');
-            console.log('🎯 Roles: Customer, Restaurant, Delivery, Admin');
+            console.log('📌 Admin Login: Click "Login" → Directly opens admin panel');
+            console.log('📌 Admin panel has its own login screen');
+            console.log('📌 Contact: +91 98765 43210, +91 98765 43211 added in footer');
+            console.log('📌 About Page: Expanded with stats, cards, and detailed content');
             console.log('📁 Customer → customer/newone.html');
             console.log('📁 Restaurant → restaurant/deepseek_html_20260626_b410ce (1).html');
             console.log('📁 Delivery → delivery/deepseek_html_20260625_e8121b.html');
