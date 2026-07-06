@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -380,6 +379,7 @@
             font-size: 0.9rem;
             opacity: 0.6;
             transition: opacity 0.3s ease;
+            z-index: 2;
         }
         .form-group .input-wrapper input {
             width: 100%;
@@ -419,6 +419,55 @@
             opacity: 1;
         }
 
+        /* ===== PHONE INPUT WITH +91 PREFIX ===== */
+        .phone-input-wrapper {
+            display: flex;
+            align-items: center;
+            background: var(--input-bg);
+            border: 1.5px solid var(--border-color);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        .phone-input-wrapper:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(90, 14, 29, 0.06);
+        }
+        .phone-input-wrapper .phone-icon {
+            padding: 0 0 0 0.85rem;
+            color: var(--text-light);
+            opacity: 0.6;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+        .phone-input-wrapper .country-code {
+            padding: 0.85rem 0.2rem 0.85rem 0.5rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            background: transparent;
+            white-space: nowrap;
+            flex-shrink: 0;
+            border-right: 1px solid var(--border-color);
+            margin-right: 0.15rem;
+        }
+        .phone-input-wrapper input {
+            border: none;
+            padding: 0.85rem 0.85rem 0.85rem 0.5rem;
+            width: 100%;
+            font-size: 0.95rem;
+            outline: none;
+            background: transparent;
+            color: var(--text-dark);
+            font-family: inherit;
+            min-width: 0;
+        }
+        .phone-input-wrapper input::placeholder {
+            color: var(--text-light);
+            opacity: 0.5;
+        }
+
+        /* ===== REMAINING STYLES (unchanged) ===== */
         .btn-auth-submit {
             background: linear-gradient(135deg, var(--primary), var(--primary-light));
             color: #fff;
@@ -574,6 +623,14 @@
             }
             .form-group .input-wrapper input {
                 padding: 0.75rem 1rem 0.75rem 2.5rem;
+                font-size: 0.9rem;
+            }
+            .phone-input-wrapper .country-code {
+                padding: 0.75rem 0.2rem 0.75rem 0.4rem;
+                font-size: 0.85rem;
+            }
+            .phone-input-wrapper input {
+                padding: 0.75rem 0.6rem 0.75rem 0.4rem;
                 font-size: 0.9rem;
             }
             .btn-auth-submit {
@@ -3090,13 +3147,16 @@
                                 <input type="email" id="reg-email" placeholder="you@example.com" required />
                             </div>
                         </div>
+                        <!-- Phone field with +91 and clean placeholder -->
                         <div class="form-group">
                             <label><i class="fa-solid fa-phone"></i> Phone Number</label>
-                            <div class="input-wrapper">
-                                <i class="fa-solid fa-phone"></i>
-                                <input type="tel" id="reg-phone" placeholder="9876543210" required />
+                            <div class="phone-input-wrapper">
+                                <i class="fa-solid fa-phone phone-icon"></i>
+                                <span class="country-code">+91</span>
+                                <input type="tel" id="reg-phone" placeholder="Enter phone number" required maxlength="10" oninput="this.value=this.value.replace(/[^0-9]/g,'')" />
                             </div>
                         </div>
+                        <!-- Password -->
                         <div class="form-group">
                             <label><i class="fa-solid fa-lock"></i> Security Password</label>
                             <div class="input-wrapper">
@@ -3105,6 +3165,16 @@
                                 <button type="button" class="toggle-password" onclick="togglePasswordVisibility('reg-pass', this)"><i class="fa-regular fa-eye"></i></button>
                             </div>
                         </div>
+                        <!-- ===== NEW: Confirm Password ===== -->
+                        <div class="form-group">
+                            <label><i class="fa-solid fa-lock"></i> Confirm Security Password</label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-lock"></i>
+                                <input type="password" id="reg-confirm-pass" placeholder="Confirm your password" required />
+                                <button type="button" class="toggle-password" onclick="togglePasswordVisibility('reg-confirm-pass', this)"><i class="fa-regular fa-eye"></i></button>
+                            </div>
+                        </div>
+                        <!-- ===== END NEW ===== -->
                         <button class="btn-auth-submit" type="submit">
                             <i class="fa-solid fa-user-plus"></i> Create Account
                         </button>
@@ -4636,8 +4706,9 @@
             var email = document.getElementById('reg-email').value.trim();
             var phone = document.getElementById('reg-phone').value.trim();
             var password = document.getElementById('reg-pass').value.trim();
+            var confirmPass = document.getElementById('reg-confirm-pass').value.trim();
 
-            if (!name || !email || !phone || !password) {
+            if (!name || !email || !phone || !password || !confirmPass) {
                 showToast('Please fill in all required fields.', 'error');
                 return;
             }
@@ -4645,6 +4716,21 @@
                 showToast('Password must be at least 6 characters.', 'error');
                 return;
             }
+            // ===== PHONE VALIDATION: exactly 10 digits =====
+            if (phone.length !== 10) {
+                showToast('Phone number must be exactly 10 digits (without +91).', 'error');
+                return;
+            }
+            if (!/^[0-9]{10}$/.test(phone)) {
+                showToast('Phone number must contain only digits (0-9).', 'error');
+                return;
+            }
+            // ===== CONFIRM PASSWORD =====
+            if (password !== confirmPass) {
+                showToast('Passwords do not match.', 'error');
+                return;
+            }
+            // ===== END VALIDATION =====
 
             var users = JSON.parse(localStorage.getItem('mad_users')) || [];
             if (users.find(function(u) { return u.email === email; })) {
