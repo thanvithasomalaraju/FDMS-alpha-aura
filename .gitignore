@@ -1,0 +1,7 @@
+# Ignore generated uploads and local env files
+
+# backend uploads (user uploaded files)
+/backend/uploads/
+
+# local environment file
+.env
