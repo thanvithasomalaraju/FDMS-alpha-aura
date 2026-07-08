@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  // Delivery partner form integration
+  // Delivery partner form integration (now using S3 presigned uploads when files are present)
   const form = document.getElementById('recruitmentForm');
   const toast = document.getElementById('toast');
   const submitBtn = document.querySelector('.btn-submit');
@@ -72,27 +72,40 @@
       return;
     }
 
+    // Prepare submission formData: we'll include keys (photoKey, licenseKey, ...) obtained via presigned uploads
     const formData = new FormData();
     formData.append('fullName', name);
     formData.append('phone', `+91${phone}`);
     formData.append('source', 'Mad Food Delivery Partner');
 
-    fileInputs.forEach((id) => {
-      const inp = document.getElementById(id);
-      if (inp && inp.files.length > 0) {
-        formData.append(id, inp.files[0]);
-      }
-    });
-
-    // Set UI submitting state
     setSubmitting(true);
 
     try {
-      // NOTE: backend endpoint is a placeholder. Implement a Spring Boot endpoint:
-      // POST /api/delivery/partners/apply  (multipart/form-data)
+      // Upload files directly to S3 using presign helper (presignAndUpload must be available on the page)
+      // If presign fails or is not configured, fall back to including the MultipartFile in the request (backend supports both)
+      for (const id of fileInputs) {
+        const inp = document.getElementById(id);
+        if (!inp || inp.files.length === 0) continue;
+        const file = inp.files[0];
+        try {
+          if (typeof presignAndUpload === 'function') {
+            const key = await presignAndUpload(file);
+            // Append the key field expected by the backend
+            formData.append(`${id}Key`, key);
+          } else {
+            // No presign helper available; append file directly
+            formData.append(id, file);
+          }
+        } catch (uploadErr) {
+          console.warn('Presign/upload failed for', id, uploadErr);
+          // fallback: include the file directly in multipart
+          formData.append(id, file);
+        }
+      }
+
+      // Submit the form (backend accepts either keys or files)
       const res = await window.ApiClient.postForm('/delivery/partners/apply', formData);
 
-      // Expecting JSON response with { success: true, message: '...' }
       showToast('Application Submitted Successfully! 🎉', (res && res.message) || 'Mad Food team will review your application within 24 hours');
 
       // reset form UI previews

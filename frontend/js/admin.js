@@ -62,30 +62,48 @@ const AdminUI = (() => {
   async function loadAndShow(id) {
     try {
       const app = await fetchApplication(id);
-      showModal(app);
+      await showModal(app);
     } catch (err) {
       alert('Error: ' + err.message);
     }
   }
 
-  function showModal(app) {
-    // Very simple modal via alert for now; recommend replacing with a nicer UI
-    let msg = `Application #${app.id}\nName: ${app.fullName}\nPhone: ${app.phone}\nSource: ${app.source}\n`;
-    if (app.photoPath) msg += `Photo: ${fileLink(app.photoPath)}\n`;
-    if (app.licensePath) msg += `License: ${fileLink(app.licensePath)}\n`;
-    if (app.rcPath) msg += `RC: ${fileLink(app.rcPath)}\n`;
-    if (app.aadharPath) msg += `Aadhar: ${fileLink(app.aadharPath)}\n`;
-    // For now open file links in new tabs
-    const proceed = confirm(msg + '\nOpen file links in new tabs?');
-    if (proceed) {
-      [app.photoPath, app.licensePath, app.rcPath, app.aadharPath].forEach(p => {
-        if (p) window.open('/api/delivery/partners/files/' + encodeURIComponent(p), '_blank');
-      });
-    }
+  async function getDownloadUrl(key) {
+    const token = localStorage.getItem('jwt_token');
+    const headers = token ? { 'Authorization': 'Bearer ' + token } : {};
+    const res = await fetch(BASE + '/storage/download?key=' + encodeURIComponent(key), {
+      method: 'GET',
+      headers: headers
+    });
+    if (!res.ok) throw new Error('Failed to get download URL: ' + res.status);
+    const json = await res.json();
+    if (!json || !json.success) throw new Error('Failed to get download URL');
+    return json.downloadUrl;
   }
 
-  function fileLink(path) {
-    return window.location.origin + '/api/delivery/partners/files/' + encodeURIComponent(path);
+  async function showModal(app) {
+    // Very simple modal via alert for now; recommend replacing with a nicer UI
+    let msg = `Application #${app.id}\nName: ${app.fullName}\nPhone: ${app.phone}\nSource: ${app.source}\n`;
+    if (app.photoPath) msg += `Photo: ${app.photoPath}\n`;
+    if (app.licensePath) msg += `License: ${app.licensePath}\n`;
+    if (app.rcPath) msg += `RC: ${app.rcPath}\n`;
+    if (app.aadharPath) msg += `Aadhar: ${app.aadharPath}\n`;
+    const proceed = confirm(msg + '\nOpen file links in new tabs?');
+    if (proceed) {
+      const keys = [app.photoPath, app.licensePath, app.rcPath, app.aadharPath];
+      for (const k of keys) {
+        if (!k) continue;
+        try {
+          // If the path looks like an S3 key, request a presigned download URL from the backend
+          const downloadUrl = await getDownloadUrl(k);
+          window.open(downloadUrl, '_blank');
+        } catch (err) {
+          console.warn('Failed to fetch download URL for', k, err);
+          // Fallback: try the legacy file endpoint
+          window.open('/api/delivery/partners/files/' + encodeURIComponent(k), '_blank');
+        }
+      }
+    }
   }
 
   return { fetchApplications, renderList };
