@@ -35,9 +35,11 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // allow auth endpoints
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/delivery/partners/apply").permitAll()
-                        .requestMatchers("/api/delivery/partners/files/**").permitAll()
+                        // allow public static assets and actuator if needed
+                        .requestMatchers("/", "/index.html", "/static/**", "/frontend/**").permitAll()
+                        // all other endpoints require authentication
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
