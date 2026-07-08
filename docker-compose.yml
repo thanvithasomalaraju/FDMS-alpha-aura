@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: madfood
+      MYSQL_USER: madfood
+      MYSQL_PASSWORD: madfoodpwd
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  backend:
+    build:
+      context: ./backend
+    restart: on-failure
+    depends_on:
+      - db
+    environment:
+      # Spring Boot relaxed binding maps these env vars to properties like spring.datasource.url
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/madfood?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=madfood
+      - SPRING_DATASOURCE_PASSWORD=madfoodpwd
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - JWT_SECRET=ChangeMeInProdChangeMeInProdChangeMe
+      - FILE_UPLOAD_DIR=/app/uploads
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend/uploads:/app/uploads
+
+volumes:
+  db_data:
