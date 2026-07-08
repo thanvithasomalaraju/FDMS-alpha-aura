@@ -3,11 +3,11 @@ package com.madfood.backend.config;
 import com.madfood.backend.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -37,7 +37,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // allow auth endpoints
                         .requestMatchers("/api/auth/**").permitAll()
-                        // allow public static assets and actuator if needed
+                        // allow public delivery application submission (applicants shouldn't need an account)
+                        .requestMatchers(HttpMethod.POST, "/api/delivery/partners/apply").permitAll()
+                        // restrict uploaded file access to admins only in development/production
+                        .requestMatchers("/api/delivery/partners/files/**").hasRole("ADMIN")
+                        // allow public static assets
                         .requestMatchers("/", "/index.html", "/static/**", "/frontend/**").permitAll()
                         // all other endpoints require authentication
                         .anyRequest().authenticated()
@@ -62,7 +66,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+    public AuthenticationManager authenticationManager(org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 }

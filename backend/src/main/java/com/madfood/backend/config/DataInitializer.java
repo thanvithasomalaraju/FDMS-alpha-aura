@@ -24,6 +24,18 @@ public class DataInitializer {
             } else {
                 System.out.println("Demo user already exists");
             }
+
+            String adminUsername = "admin";
+            if (!userRepository.existsByUsername(adminUsername)) {
+                User a = new User();
+                a.setUsername(adminUsername);
+                a.setPassword(passwordEncoder.encode("admin123"));
+                a.setRoles("ROLE_ADMIN");
+                userRepository.save(a);
+                System.out.println("Created admin user: admin / admin123 (dev only)");
+            } else {
+                System.out.println("Admin user already exists");
+            }
         };
     }
 }
