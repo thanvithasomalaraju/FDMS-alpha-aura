@@ -71,6 +71,12 @@
             <version>0.11.5</version>
             <scope>runtime</scope>
         </dependency>
+        <!-- AWS SDK S3 (for presigned upload/download) -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+            <version>2.20.116</version>
+        </dependency>
     </dependencies>
 
     <build>
