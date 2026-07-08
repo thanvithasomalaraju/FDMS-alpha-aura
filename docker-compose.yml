@@ -11,6 +11,8 @@ services:
       MYSQL_PASSWORD: madfoodpwd
     volumes:
       - db_data:/var/lib/mysql
+      # Initialize schema on first run
+      - ./backend/sql/mysql_init.sql:/docker-entrypoint-initdb.d/mysql_init.sql:ro
     ports:
       - "3306:3306"
 
@@ -26,8 +28,9 @@ services:
       - SPRING_DATASOURCE_USERNAME=madfood
       - SPRING_DATASOURCE_PASSWORD=madfoodpwd
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-      - JWT_SECRET=ChangeMeInProdChangeMeInProdChangeMe
+      - JWT_SECRET=ChangeMeInComposeChangeMeInComposeChangeMe
       - FILE_UPLOAD_DIR=/app/uploads
+      - APP_CREATE_DEV_USERS=true
     ports:
       - "8080:8080"
     volumes:
