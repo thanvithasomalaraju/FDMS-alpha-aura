@@ -1,0 +1,125 @@
+-- V1__create_schema.sql
+CREATE TABLE users (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255),
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  phone VARCHAR(32),
+  role ENUM('CUSTOMER','RESTAURANT','DELIVERY','ADMIN') NOT NULL,
+  status ENUM('PENDING','ACTIVE','BLOCKED') DEFAULT 'PENDING',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE restaurants (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  description TEXT,
+  address TEXT,
+  phone VARCHAR(32),
+  earnings DECIMAL(12,2) DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_rest_user FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE foods (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  restaurant_id BIGINT NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  description TEXT,
+  price DECIMAL(10,2) NOT NULL,
+  image_path VARCHAR(512),
+  is_veg BOOLEAN DEFAULT FALSE,
+  available BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_food_rest FOREIGN KEY (restaurant_id) REFERENCES restaurants(id)
+);
+
+CREATE TABLE addresses (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT NOT NULL,
+  label VARCHAR(100),
+  line1 VARCHAR(255),
+  line2 VARCHAR(255),
+  city VARCHAR(100),
+  state VARCHAR(100),
+  zip VARCHAR(32),
+  lat DECIMAL(10,7),
+  lng DECIMAL(10,7),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_addr_user FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE carts (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_cart_user FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE cart_items (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  cart_id BIGINT NOT NULL,
+  food_id BIGINT NOT NULL,
+  qty INT NOT NULL,
+  price DECIMAL(10,2) NOT NULL,
+  CONSTRAINT fk_cart_cart FOREIGN KEY (cart_id) REFERENCES carts(id),
+  CONSTRAINT fk_cart_food FOREIGN KEY (food_id) REFERENCES foods(id)
+);
+
+CREATE TABLE orders (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT NOT NULL,
+  restaurant_id BIGINT NOT NULL,
+  address_id BIGINT NOT NULL,
+  total DECIMAL(12,2) NOT NULL,
+  status ENUM('PENDING','ACCEPTED','REJECTED','PREPARING','READY','OUT_FOR_DELIVERY','DELIVERED','CANCELLED') DEFAULT 'PENDING',
+  placed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  accepted_at TIMESTAMP NULL,
+  delivered_at TIMESTAMP NULL,
+  CONSTRAINT fk_order_user FOREIGN KEY (user_id) REFERENCES users(id),
+  CONSTRAINT fk_order_rest FOREIGN KEY (restaurant_id) REFERENCES restaurants(id),
+  CONSTRAINT fk_order_addr FOREIGN KEY (address_id) REFERENCES addresses(id)
+);
+
+CREATE TABLE order_items (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  order_id BIGINT NOT NULL,
+  food_id BIGINT NOT NULL,
+  qty INT NOT NULL,
+  price DECIMAL(10,2) NOT NULL,
+  CONSTRAINT fk_oi_order FOREIGN KEY (order_id) REFERENCES orders(id),
+  CONSTRAINT fk_oi_food FOREIGN KEY (food_id) REFERENCES foods(id)
+);
+
+CREATE TABLE delivery_applications (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  full_name VARCHAR(255),
+  phone VARCHAR(32),
+  source VARCHAR(255),
+  photo_path VARCHAR(512),
+  license_path VARCHAR(512),
+  rc_path VARCHAR(512),
+  aadhar_path VARCHAR(512),
+  status ENUM('PENDING','REVIEWED','APPROVED','REJECTED') DEFAULT 'PENDING',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE images (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  entity_type VARCHAR(64),
+  entity_id BIGINT,
+  filename VARCHAR(255),
+  path VARCHAR(512),
+  url VARCHAR(512),
+  uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE refresh_tokens (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT NOT NULL,
+  token VARCHAR(512) NOT NULL,
+  expires_at TIMESTAMP NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_rt_user FOREIGN KEY (user_id) REFERENCES users(id)
+);
