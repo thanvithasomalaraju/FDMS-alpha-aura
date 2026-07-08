@@ -30,8 +30,9 @@ public class SecurityHeadersFilter extends HttpFilter {
         response.setHeader("X-XSS-Protection", "1; mode=block");
         // Referrer policy
         response.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
-        // Content security policy - kept minimal to avoid breaking inline scripts used in dev
-        response.setHeader("Content-Security-Policy", "default-src 'self' 'unsafe-inline' data: https:; img-src 'self' data: https:; object-src 'none'; frame-ancestors 'none';");
+        // Content security policy - slightly stricter but still permissive enough for dev
+        // Allows scripts/styles from self and https, permits inline scripts/styles to avoid breaking dev tooling
+        response.setHeader("Content-Security-Policy", "default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; object-src 'none'; frame-ancestors 'none';");
 
         chain.doFilter(request, response);
     }
