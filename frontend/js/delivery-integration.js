@@ -1,163 +1,137 @@
 (function () {
   'use strict';
 
-  /* --- Auth helper (token store + fetchWithAuth) --- */
-  const AUTH_KEY = 'mf_token';
-  window.authStore = {
-    setToken(token) { localStorage.setItem(AUTH_KEY, token); },
-    getToken() { return localStorage.getItem(AUTH_KEY); },
-    clear() { localStorage.removeItem(AUTH_KEY); },
-    isAuthenticated() { return !!localStorage.getItem(AUTH_KEY); }
-  };
-  window.fetchWithAuth = async (url, opts = {}) => {
-    opts = Object.assign({}, opts);
-    opts.headers = Object.assign({}, opts.headers || {});
-    const token = authStore.getToken();
-    if (token) opts.headers['Authorization'] = 'Bearer ' + token;
-    const res = await fetch(url, opts);
-    if (res.status === 401) {
-      authStore.clear();
-      alert('Session expired — please log in again.');
-      location.reload();
-      throw new Error('Unauthorized');
-    }
-    return res;
-  };
+  // Delivery partner form integration
+  const form = document.getElementById('recruitmentForm');
+  const toast = document.getElementById('toast');
+  const submitBtn = document.querySelector('.btn-submit');
 
-  /* --- small toast helper (uses #toast if present) --- */
-  function showToast(message) {
-    const toast = document.getElementById('toast');
-    if (!toast) { alert(message); return; }
-    toast.querySelector('.toast-text')?.firstChild && (toast.querySelector('.toast-text').firstChild.textContent = message);
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 5000);
+  if (!form) {
+    console.warn('Delivery integration: recruitmentForm not found on page');
+    return;
   }
 
-  /* --- Delivery form wiring --- */
-  document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('recruitmentForm');
-    if (!form) return;
+  function showToast(message, submessage) {
+    if (!toast) return alert(message + (submessage ? '\n' + submessage : ''));
+    const textEl = toast.querySelector('.toast-text');
+    if (textEl) {
+      textEl.innerHTML = `${message}<small>${submessage || ''}</small>`;
+    }
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 6000);
+  }
 
-    // Build previews (keeps page UX)
-    const FILES_CONFIG = [
-      { id: 'photo',   label: 'Profile Photo' },
-      { id: 'license', label: 'License'       },
-      { id: 'rc',      label: 'RC'            },
-      { id: 'aadhar',  label: 'Aadhar'        },
-    ];
-    const grid = document.getElementById('previewGrid');
-    if (grid && grid.children.length === 0) {
-      FILES_CONFIG.forEach((item) => {
-        const div = document.createElement('div');
-        div.className = 'preview-item';
-        div.id = `preview-${item.id}`;
-        div.innerHTML = `
-          <span class="placeholder-icon"><i class="fas fa-cloud-upload-alt"></i></span>
-          <img id="img-${item.id}" src="" alt="${item.label}" />
-          <span class="file-label">${item.label}</span>
-          <span class="badge-uploaded"><i class="fas fa-check-circle"></i> Uploaded</span>
-        `;
-        grid.appendChild(div);
-      });
+  function setSubmitting(isSubmitting) {
+    if (!submitBtn) return;
+    submitBtn.disabled = isSubmitting;
+    if (isSubmitting) {
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+    } else {
+      submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Application';
+    }
+  }
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const name = document.getElementById('fullName').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const fileInputs = ['photo', 'license', 'rc', 'aadhar'];
+
+    if (!/^[a-zA-Z\s]+$/.test(name)) {
+      alert('❌ Please enter a valid name using only alphabets and spaces.');
+      document.getElementById('fullName').focus();
+      return;
     }
 
-    FILES_CONFIG.forEach(({ id }) => {
-      const input = document.getElementById(id);
-      const previewDiv = document.getElementById(`preview-${id}`);
-      const img = document.getElementById(`img-${id}`);
-      if (!input) return;
-      input.addEventListener('change', function () {
-        const file = this.files[0];
-        if (!file) {
-          previewDiv?.classList.remove('has-image');
-          img && (img.src = '');
-          return;
+    if (phone.length !== 10) {
+      alert('Please enter a valid 10-digit phone number.');
+      document.getElementById('phone').focus();
+      return;
+    }
+
+    let allFilesSelected = true;
+    fileInputs.forEach((id) => {
+      const inp = document.getElementById(id);
+      if (!inp || inp.files.length === 0) {
+        allFilesSelected = false;
+        if (inp) {
+          inp.style.borderColor = '#b23b4a';
+          inp.style.boxShadow = '0 0 0 4px rgba(178,59,74,0.12)';
         }
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          if (img) img.src = e.target.result;
-          previewDiv?.classList.add('has-image');
-        };
-        reader.readAsDataURL(file);
-      });
-    });
-
-    // Client validation helpers
-    const fullNameInput = document.getElementById('fullName');
-    fullNameInput?.addEventListener('input', function () {
-      this.value = this.value.replace(/[^a-zA-Z\s]/g, '');
-      this.value = this.value.replace(/\b\w/g, c => c.toUpperCase());
-    });
-    const phoneInput = document.getElementById('phone');
-    phoneInput?.addEventListener('input', function () {
-      this.value = this.value.replace(/\D/g, '').slice(0, 10);
-    });
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const name = (document.getElementById('fullName')?.value || '').trim();
-      const phone = (document.getElementById('phone')?.value || '').trim();
-      const requiredFiles = ['photo', 'license', 'rc', 'aadhar'];
-
-      if (!/^[a-zA-Z\s]+$/.test(name)) {
-        alert('❌ Please enter a valid name using only alphabets and spaces.');
-        document.getElementById('fullName')?.focus();
-        return;
-      }
-      if (phone.length !== 10) { alert('Please enter a valid 10-digit phone number.'); document.getElementById('phone')?.focus(); return; }
-
-      let allFilesSelected = true;
-      requiredFiles.forEach(id => {
-        const inp = document.getElementById(id);
-        if (!inp || inp.files.length === 0) {
-          allFilesSelected = false;
-          if (inp) { inp.style.borderColor = '#b23b4a'; inp.style.boxShadow = '0 0 0 4px rgba(178,59,74,0.12)'; }
-        } else if (inp) {
-          inp.style.borderColor = '#e6d5c4'; inp.style.boxShadow = 'none';
+      } else {
+        if (inp) {
+          inp.style.borderColor = '#e6d5c4';
+          inp.style.boxShadow = 'none';
         }
-      });
-      if (!allFilesSelected) {
-        alert('Please upload all required documents: Profile Photo, Driving License, RC, Aadhar');
-        return;
-      }
-
-      // Build FormData
-      const formData = new FormData();
-      formData.append('fullName', name);
-      formData.append('phone', `+91${phone}`);
-      formData.append('source', 'Mad Food Delivery Partner');
-      requiredFiles.forEach(id => {
-        const inp = document.getElementById(id);
-        if (inp && inp.files[0]) formData.append(id, inp.files[0]);
-      });
-
-      // UI feedback
-      const btn = form.querySelector('.btn-submit');
-      if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...'; }
-
-      try {
-        const res = await fetch('/api/delivery/applications', { method: 'POST', body: formData });
-        const json = await res.json().catch(()=>({ success:false, message:'Invalid server response' }));
-        if (res.ok && json.success) {
-          showToast(json.message || 'Application submitted successfully!');
-          // Optionally clear the form here
-          form.reset();
-          document.querySelectorAll('.preview-item.has-image').forEach(el => el.classList.remove('has-image'));
-        } else {
-          alert(json.message || 'Submission failed');
-        }
-      } catch (err) {
-        alert('Network error: ' + err.message);
-      } finally {
-        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Application'; }
       }
     });
 
-    // Remove error styling when file changes
-    ['photo','license','rc','aadhar'].forEach(id => {
-      const el = document.getElementById(id);
-      el?.addEventListener('change', () => { el.style.borderColor = '#e6d5c4'; el.style.boxShadow = 'none'; });
+    if (!allFilesSelected) {
+      alert('Please upload all required documents:\n• Profile Photo\n• Driving License\n• RC Certificate\n• Aadhar Card');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('fullName', name);
+    formData.append('phone', `+91${phone}`);
+    formData.append('source', 'Mad Food Delivery Partner');
+
+    fileInputs.forEach((id) => {
+      const inp = document.getElementById(id);
+      if (inp && inp.files.length > 0) {
+        formData.append(id, inp.files[0]);
+      }
+    });
+
+    // Set UI submitting state
+    setSubmitting(true);
+
+    try {
+      // NOTE: backend endpoint is a placeholder. Implement a Spring Boot endpoint:
+      // POST /api/delivery/partners/apply  (multipart/form-data)
+      const res = await window.ApiClient.postForm('/delivery/partners/apply', formData);
+
+      // Expecting JSON response with { success: true, message: '...' }
+      showToast('Application Submitted Successfully! 🎉', (res && res.message) || 'Mad Food team will review your application within 24 hours');
+
+      // reset form UI previews
+      fileInputs.forEach((id) => {
+        const previewDiv = document.getElementById(`preview-${id}`);
+        const img = document.getElementById(`img-${id}`);
+        if (previewDiv) previewDiv.classList.remove('has-image');
+        if (img) img.src = '';
+        const inputEl = document.getElementById(id);
+        if (inputEl) inputEl.value = '';
+      });
+
+    } catch (err) {
+      console.error('Delivery application error', err);
+      let message = 'Failed to submit application.';
+      let details = '';
+      if (err && err.body) {
+        try {
+          const body = typeof err.body === 'string' ? JSON.parse(err.body) : err.body;
+          if (body && body.message) message = body.message;
+          else details = JSON.stringify(body);
+        } catch (parseErr) {
+          details = err.body;
+        }
+      }
+      showToast('Submission failed', message + (details ? ' — ' + details : ''));
+    } finally {
+      setSubmitting(false);
+    }
+  });
+
+  // Remove error styling on file change
+  ['photo', 'license', 'rc', 'aadhar'].forEach((id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('change', function () {
+      this.style.borderColor = '#e6d5c4';
+      this.style.boxShadow = 'none';
     });
   });
+
 })();
