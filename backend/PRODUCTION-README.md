@@ -1,33 +1,31 @@
-# Production hardening checklist and notes
+Production checklist — S3 & presigned uploads additions
 
-This file lists the small set of production hardening steps applied and remaining tasks before deploying to production.
+I added S3 presigned-upload support to the backend and a small frontend helper. Before promoting to staging/production, complete these steps:
 
-What this branch (Dimple) already does:
-- Requires authentication for non-auth endpoints; delivery application POST is public by design.
-- File access endpoint restricted to ROLE_ADMIN.
-- Dev users can be optionally created on startup for convenience when running locally (controlled by app.create-dev-users=true). By default this is disabled; set app.create-dev-users=true in application.properties or provide the environment variable to create them.
-- Rate limiting filter (in-memory) added for basic protection against simple abuse patterns.
-- Security headers filter adds X-Frame-Options, X-Content-Type-Options, CSP and Referrer-Policy.
-- CORS filter reads allowed origins from environment variable APP_ALLOWED_ORIGINS.
-- Multipart upload size limits set in application.properties (5MB per file).
-- Basic validation and global exception handler provide structured JSON errors.
+1) Set the following environment variables on the server/runtime (examples):
+   - AWS_REGION=us-east-1
+   - S3_BUCKET=your-company-madfood-uploads
+   - S3_PREFIX=delivery-apps   # optional
+   - JWT_SECRET=<secure-32+char-secret>
+   - Do not set AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY in git or code. Use environment secrets or instance IAM roles.
 
-How to enable dev users (local testing)
-- By default app.create-dev-users is false. To create the demo/admin users at startup for local testing set one of:
-  - environment variable: APP_CREATE_DEV_USERS=true
-  - or in application.properties: app.create-dev-users=true
+2) Create an IAM role with the least-privilege policy in backend/S3-IAM-POLICY.md. Attach it to your compute environment (ECS task role, EC2 instance profile, etc.).
 
-Remaining recommended steps before production:
-1. Replace JWT secret with a secure secret (set JWT_SECRET env var). Keep it at least 32+ random characters.
-2. Replace in-memory rate limiter with a distributed solution (API gateway, Cloud Armor, or Redis-backed token bucket) for multi-instance deployments.
-3. Move file storage to S3/GCS and use signed URLs; remove direct file serving from the application.
-4. Remove or rotate the dev demo/admin credentials and add a proper admin provisioning process (if you enabled dev users, disable before production).
-5. Configure HTTPS termination (load balancer or reverse proxy) and strict TLS settings.
-6. Add monitoring/alerting (Prometheus/Grafana, Sentry for exceptions) and structured request tracing.
-7. Add additional input sanitization and strict validation for free-form fields.
-8. Harden CORS to only allow known origins and restrict methods if not required.
-9. Add CSP rules tailored to your frontend (the current CSP is intentionally permissive to avoid breaking dev scripts; tighten before production).
-10. Add automated backup and DB migration strategy when switching to a persistent DB.
+3) Configure S3 CORS so browser-based PUT requests succeed (see backend/S3-IAM-POLICY.md for example CORS config).
 
-How to run with environment values (example Docker Compose):
-- Set JWT_SECRET, APP_ALLOWED_ORIGINS, SPRING_DATASOURCE_URL (if using MySQL), FILE_UPLOAD_DIR, and APP_CREATE_DEV_USERS=true for local testing.
+4) Ensure the S3 bucket is private. Use presigned GETs for admin downloads rather than public object URLs.
+
+5) Rotate and store JWT_SECRET securely in your CI/CD or secrets manager and ensure it's injected into the runtime environment.
+
+6) Remove demo/admin user creation in non-development environments. The compose file enables dev users for convenience only.
+
+7) Consider lifecycle rules for uploaded objects and an audit policy for who requested presigned URLs.
+
+8) After all clients are migrated to presigned uploads and you have verified saved keys are valid, remove the LocalFileStorageService and the legacy GET /api/delivery/partners/files/{filename} endpoint to simplify the stack.
+
+If you want, I can:
+- Add an example AWS IAM policy document to the console for immediate copy/paste (already added as S3-IAM-POLICY.md).
+- Add a small integration test that requests a presign URL and validates the returned fields (no actual S3 PUT) as part of CI.
+
+What I will do next if you say "continue"
+- Add the IAM policy to PRODUCTION-README.md (done) — if you want I will also add a small integration test and a GitHub Actions workflow to run it.
