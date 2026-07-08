@@ -24,6 +24,12 @@ public class DeliveryApplicationRequest {
     private MultipartFile rc;
     private MultipartFile aadhar;
 
+    // Alternatively, when using presigned S3 uploads the frontend will submit keys for already-uploaded objects.
+    private String photoKey;
+    private String licenseKey;
+    private String rcKey;
+    private String aadharKey;
+
     // Getters and setters
     public String getFullName() { return fullName; }
     public void setFullName(String fullName) { this.fullName = fullName; }
@@ -45,4 +51,16 @@ public class DeliveryApplicationRequest {
 
     public MultipartFile getAadhar() { return aadhar; }
     public void setAadhar(MultipartFile aadhar) { this.aadhar = aadhar; }
+
+    public String getPhotoKey() { return photoKey; }
+    public void setPhotoKey(String photoKey) { this.photoKey = photoKey; }
+
+    public String getLicenseKey() { return licenseKey; }
+    public void setLicenseKey(String licenseKey) { this.licenseKey = licenseKey; }
+
+    public String getRcKey() { return rcKey; }
+    public void setRcKey(String rcKey) { this.rcKey = rcKey; }
+
+    public String getAadharKey() { return aadharKey; }
+    public void setAadharKey(String aadharKey) { this.aadharKey = aadharKey; }
 }

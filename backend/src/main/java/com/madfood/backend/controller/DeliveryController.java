@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.Valid;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,11 +38,22 @@ public class DeliveryController {
     public ResponseEntity<?> apply(@Valid @ModelAttribute DeliveryApplicationRequest request) {
         logger.info("New delivery application from {}", request.getPhone());
 
-        // Basic file checks
+        // Basic file checks. If the frontend has uploaded files to S3 and provided keys, we skip file validations for those fields.
         MultipartFile[] files = new MultipartFile[]{request.getPhoto(), request.getLicense(), request.getRc(), request.getAadhar()};
         String[] names = new String[]{"photo", "license", "rc", "aadhar"};
+        String[] keys = new String[]{request.getPhotoKey(), request.getLicenseKey(), request.getRcKey(), request.getAadharKey()};
         for (int i = 0; i < files.length; i++) {
             MultipartFile f = files[i];
+            String providedKey = keys[i];
+            if ((f == null || f.isEmpty()) && (providedKey == null || providedKey.isBlank())) {
+                // no file provided at all — that's acceptable (fields are optional)
+                continue;
+            }
+            if (providedKey != null && !providedKey.isBlank()) {
+                // presigned-uploaded file key provided by frontend — skip size/content-type checks
+                continue;
+            }
+            // At this point we have a MultipartFile present; validate size and content type
             if (f != null && !f.isEmpty()) {
                 if (f.getSize() > 5 * 1024 * 1024) {
                     logger.warn("File {} too large ({} bytes)", names[i], f.getSize());
@@ -62,19 +74,31 @@ public class DeliveryController {
         app.setSource(request.getSource());
 
         try {
-            if (request.getPhoto() != null && !request.getPhoto().isEmpty()) {
+            // For each field: prefer provided key (S3 object key). If not provided but MultipartFile present, store locally via FileStorageService.
+            if (request.getPhotoKey() != null && !request.getPhotoKey().isBlank()) {
+                app.setPhotoPath(request.getPhotoKey());
+            } else if (request.getPhoto() != null && !request.getPhoto().isEmpty()) {
                 String stored = fileStorageService.store(request.getPhoto());
                 app.setPhotoPath(stored);
             }
-            if (request.getLicense() != null && !request.getLicense().isEmpty()) {
+
+            if (request.getLicenseKey() != null && !request.getLicenseKey().isBlank()) {
+                app.setLicensePath(request.getLicenseKey());
+            } else if (request.getLicense() != null && !request.getLicense().isEmpty()) {
                 String stored = fileStorageService.store(request.getLicense());
                 app.setLicensePath(stored);
             }
-            if (request.getRc() != null && !request.getRc().isEmpty()) {
+
+            if (request.getRcKey() != null && !request.getRcKey().isBlank()) {
+                app.setRcPath(request.getRcKey());
+            } else if (request.getRc() != null && !request.getRc().isEmpty()) {
                 String stored = fileStorageService.store(request.getRc());
                 app.setRcPath(stored);
             }
-            if (request.getAadhar() != null && !request.getAadhar().isEmpty()) {
+
+            if (request.getAadharKey() != null && !request.getAadharKey().isBlank()) {
+                app.setAadharPath(request.getAadharKey());
+            } else if (request.getAadhar() != null && !request.getAadhar().isEmpty()) {
                 String stored = fileStorageService.store(request.getAadhar());
                 app.setAadharPath(stored);
             }
@@ -86,6 +110,9 @@ public class DeliveryController {
             resp.put("message", "Application received");
             resp.put("id", saved.getId());
             return ResponseEntity.ok(resp);
+        } catch (IOException ex) {
+            logger.error("Failed to store file", ex);
+            return ResponseEntity.status(500).body(Map.of("success", false, "message", "Failed to store uploaded file"));
         } catch (Exception ex) {
             logger.error("Failed to save delivery application", ex);
             return ResponseEntity.status(500).body(Map.of("success", false, "message", "Failed to process application"));
