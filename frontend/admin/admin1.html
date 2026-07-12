@@ -1,0 +1,3012 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="custom">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mad Foods Enterprise Admin Dashboard</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../js/api-config.js"></script>
+
+    <style>
+        /* ----- BURGUNDY + BEIGE THEME (no functional changes) ----- */
+        :root {
+            --bg: #f8f3ed;
+            --bg-2: #f5efe8;
+            --surface: #fcf9f5;
+            --surface-2: #f3ede6;
+            --border: #e2d6c8;
+            --text: #3e2c26;
+            --muted: #7a655c;
+
+            --brand: #6a1e2a;
+            --brand-2: #8a2a3a;
+            --brand-light: #b54a5a;
+
+            --success: #2d7a4a;
+            --info: #3a7ca5;
+            --warning: #b68b40;
+            --danger: #b13e4b;
+
+            --radius: 14px;
+            --shadow: 0 10px 30px rgba(60, 40, 30, 0.12);
+        }
+
+        [data-theme="light"] {
+            --bg: #f8f3ed;
+            --bg-2: #f5efe8;
+            --surface: #fcf9f5;
+            --surface-2: #f3ede6;
+            --border: #e2d6c8;
+            --text: #3e2c26;
+            --muted: #7a655c;
+            --shadow: 0 6px 20px rgba(60, 40, 30, 0.08);
+        }
+
+        [data-theme="dark"] {
+            --bg: #2b1e1a;
+            --bg-2: #342620;
+            --surface: #3d2d26;
+            --surface-2: #4a3830;
+            --border: #5f4a40;
+            --text: #f0e6df;
+            --muted: #b8a69b;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--brand), var(--brand-2));
+            border: none;
+            color: #f8f3ed;
+            font-weight: 700;
+            font-size: 1.2rem;
+            padding: 14px 20px;
+            border-radius: 40px;
+            letter-spacing: 0.5px;
+            transition: 0.2s;
+            width: 100%;
+            max-width: 300px;
+            margin: 22px auto 12px;
+            display: block;
+            text-align: center;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--brand-2), var(--brand-light));
+            transform: scale(1.02);
+            box-shadow: 0 6px 16px rgba(106, 30, 42, 0.3);
+        }
+
+        .btn.primary {
+            background: linear-gradient(135deg, var(--brand), var(--brand-2));
+            border-color: transparent;
+            color: #f8f3ed;
+        }
+        .btn.primary:hover {
+            background: linear-gradient(135deg, var(--brand-2), var(--brand-light));
+            border-color: var(--brand);
+        }
+
+        .brand-mark {
+            background: linear-gradient(135deg, var(--brand), var(--brand-2));
+            box-shadow: 0 8px 20px rgba(106, 30, 42, 0.4);
+            color: #f8f3ed;
+            width: 56px;
+            height: 56px;
+            display: grid;
+            place-items: center;
+            border-radius: 16px;
+            font-size: 28px;
+        }
+        .logo-icon {
+            background: linear-gradient(135deg, var(--brand), var(--brand-2));
+            color: #f8f3ed;
+            width: 40px;
+            height: 40px;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            font-size: 20px;
+            box-shadow: 0 4px 10px rgba(106, 30, 42, 0.25);
+        }
+        .nav-link.active {
+            background: linear-gradient(135deg, rgba(106, 30, 42, 0.18), rgba(138, 42, 58, 0.08));
+            color: var(--brand);
+        }
+        .nav-link:hover {
+            background: var(--surface);
+            color: var(--text);
+        }
+        .icon-btn .dot {
+            background: var(--brand);
+        }
+        .avatar {
+            background: linear-gradient(135deg, var(--info), var(--brand));
+        }
+        .badge.brand {
+            background: rgba(106, 30, 42, 0.15);
+            color: var(--brand);
+            border-color: rgba(106, 30, 42, 0.3);
+        }
+        .kpi.brand .kpi-icon {
+            background: rgba(106, 30, 42, 0.15);
+            color: var(--brand);
+        }
+        .progress>div {
+            background: linear-gradient(90deg, var(--brand), var(--brand-2));
+        }
+        .live-item {
+            border-left-color: var(--brand);
+        }
+        .profile-uploader {
+            background: linear-gradient(135deg, var(--info), var(--brand));
+        }
+        .profile-uploader small {
+            background: var(--brand);
+        }
+        .toast {
+            background: linear-gradient(135deg, var(--brand), var(--brand-2));
+            color: #f8f3ed;
+        }
+        .chat-message {
+            background: rgba(106, 30, 42, 0.12);
+        }
+        .heatmap>div {
+            border-left-color: var(--brand);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100%;
+        }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        a {
+            color: inherit;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        button {
+            font-family: inherit;
+            cursor: pointer;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .muted {
+            color: var(--muted);
+        }
+        .tiny {
+            font-size: 12px;
+        }
+
+        .login-screen {
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 20px;
+            background:
+                radial-gradient(800px 400px at 80% 10%, rgba(106, 30, 42, 0.12), transparent 60%),
+                radial-gradient(700px 500px at 10% 90%, rgba(58, 124, 165, 0.10), transparent 60%),
+                var(--bg);
+        }
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            padding: 36px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+        .login-card h1 {
+            margin: 20px 0 4px;
+            font-size: 24px;
+        }
+        .login-card p,
+        .login-card small {
+            color: var(--muted);
+        }
+        .login-card label {
+            display: block;
+            margin: 16px 0 6px;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: left;
+        }
+        .login-card input {
+            width: 100%;
+            padding: 12px 14px;
+            color: var(--text);
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            outline: none;
+            font-size: 14px;
+        }
+        .login-card input:focus {
+            border-color: var(--brand);
+        }
+
+        .shell {
+            display: grid;
+            grid-template-columns: 260px minmax(0, 1fr);
+            min-height: 100vh;
+        }
+        .sidebar {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            padding: 20px 14px;
+            overflow-y: auto;
+            background: var(--bg-2);
+            border-right: 1px solid var(--border);
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+            padding: 0 8px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+        .logo-title {
+            font-size: 15px;
+            font-weight: 800;
+        }
+        .logo-sub {
+            color: var(--muted);
+            font-size: 11px;
+        }
+        .nav-group {
+            padding: 14px 12px 6px;
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 9px 12px;
+            color: var(--muted);
+            border-radius: 10px;
+            font-size: 13.5px;
+            font-weight: 500;
+            transition: all 0.15s ease;
+        }
+        .nav-link span {
+            font-size: 16px;
+        }
+
+        .main {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 24px;
+            background: rgba(248, 243, 237, 0.85);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(12px);
+        }
+        [data-theme="dark"] .topbar {
+            background: rgba(43, 30, 26, 0.85);
+        }
+        .search {
+            flex: 1;
+            max-width: 480px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+        .search input {
+            flex: 1;
+            min-width: 0;
+            color: var(--text);
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 13.5px;
+        }
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: auto;
+        }
+        .icon-btn {
+            position: relative;
+            width: 38px;
+            height: 38px;
+            display: grid;
+            place-items: center;
+            color: var(--text);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            pointer-events: auto;
+        }
+        .icon-btn:hover {
+            border-color: var(--brand);
+        }
+        .avatar {
+            width: 38px;
+            height: 38px;
+            display: grid;
+            place-items: center;
+            color: #f8f3ed;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .content {
+            width: 100%;
+            max-width: 1600px;
+            padding: 28px;
+        }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+        .page-header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 800;
+        }
+        .page-header p {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 13.5px;
+        }
+        .page-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            color: var(--text);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            pointer-events: auto;
+            opacity: 1;
+        }
+        .btn:hover {
+            border-color: var(--brand);
+        }
+        .btn.success {
+            color: #f8f3ed;
+            background: var(--success);
+            border-color: transparent;
+        }
+        .btn.danger {
+            color: #f8f3ed;
+            background: var(--danger);
+            border-color: transparent;
+        }
+        .btn.warning {
+            color: #3e2c26;
+            background: var(--warning);
+            border-color: transparent;
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .kpi {
+            position: relative;
+            overflow: hidden;
+            padding: 18px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+        }
+        .kpi-label {
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        .kpi-value {
+            margin-top: 8px;
+            font-size: 26px;
+            font-weight: 800;
+        }
+        .kpi-delta {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .kpi-delta.up {
+            color: var(--success);
+        }
+        .kpi-delta.down {
+            color: var(--danger);
+        }
+        .kpi-icon {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 40px;
+            height: 40px;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            font-size: 18px;
+        }
+        .kpi.success .kpi-icon {
+            background: rgba(45, 122, 74, 0.15);
+            color: var(--success);
+        }
+        .kpi.info .kpi-icon {
+            background: rgba(58, 124, 165, 0.15);
+            color: var(--info);
+        }
+        .kpi.warning .kpi-icon {
+            background: rgba(182, 139, 64, 0.15);
+            color: var(--warning);
+        }
+
+        .grid {
+            display: grid;
+            gap: 16px;
+        }
+        .grid.cols-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .grid.cols-3 {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+        .grid.cols-12 {
+            grid-template-columns: repeat(12, minmax(0, 1fr));
+        }
+        .card {
+            padding: 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+        }
+        .card-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .card-title {
+            font-size: 15px;
+            font-weight: 700;
+        }
+        .card-sub {
+            color: var(--muted);
+            font-size: 12px;
+        }
+        .chart-box {
+            position: relative;
+            height: 280px;
+        }
+        .chart-box.sm {
+            height: 220px;
+        }
+        .chart-box.lg {
+            height: 340px;
+        }
+
+        .table-wrap {
+            overflow: hidden;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+        }
+        .table-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        .table-controls .search {
+            flex: 1;
+            min-width: 220px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th,
+        td {
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 13px;
+        }
+        th {
+            color: var(--muted);
+            background: var(--surface-2);
+            border-bottom: 1px solid var(--border);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+        }
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+        tbody tr:hover {
+            background: var(--surface-2);
+        }
+        .right {
+            text-align: right;
+        }
+        .bold {
+            font-weight: 700;
+        }
+        .mono {
+            color: var(--muted);
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            font-size: 12px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 9px;
+            color: var(--muted);
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: currentColor;
+            border-radius: 50%;
+        }
+        .badge.success {
+            background: rgba(45, 122, 74, 0.12);
+            color: var(--success);
+            border-color: rgba(45, 122, 74, 0.3);
+        }
+        .badge.info {
+            background: rgba(58, 124, 165, 0.12);
+            color: var(--info);
+            border-color: rgba(58, 124, 165, 0.3);
+        }
+        .badge.warning {
+            background: rgba(182, 139, 64, 0.15);
+            color: var(--warning);
+            border-color: rgba(182, 139, 64, 0.3);
+        }
+        .badge.danger {
+            background: rgba(177, 62, 75, 0.12);
+            color: var(--danger);
+            border-color: rgba(177, 62, 75, 0.3);
+        }
+
+        .avatar-sm {
+            width: 32px;
+            height: 32px;
+            display: inline-grid;
+            place-items: center;
+            margin-right: 10px;
+            vertical-align: middle;
+            color: #f8f3ed;
+            background: linear-gradient(135deg, var(--info), var(--brand));
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .user-cell .name {
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .user-cell .sub {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .progress {
+            width: 120px;
+            height: 6px;
+            overflow: hidden;
+            background: var(--surface-2);
+            border-radius: 999px;
+        }
+
+        .live-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .live-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 14px;
+            background: var(--surface-2);
+            border-left: 3px solid var(--brand);
+            border-radius: 10px;
+        }
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.3;
+            }
+        }
+        .col-span-8 {
+            grid-column: span 8;
+        }
+        .col-span-6 {
+            grid-column: span 6;
+        }
+        .col-span-4 {
+            grid-column: span 4;
+        }
+
+        .mobile-only {
+            display: none;
+        }
+        @media (max-width: 900px) {
+            .shell {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                position: fixed;
+                left: -280px;
+                z-index: 100;
+                width: 260px;
+                transition: left 0.25s ease;
+            }
+            .sidebar.open {
+                left: 0;
+            }
+            .mobile-only {
+                display: grid;
+            }
+            .grid.cols-2,
+            .grid.cols-3 {
+                grid-template-columns: 1fr;
+            }
+            .col-span-8,
+            .col-span-6,
+            .col-span-4 {
+                grid-column: span 12;
+            }
+            .content {
+                padding: 18px;
+            }
+        }
+
+        .profile-uploader {
+            position: relative;
+            width: 38px;
+            height: 38px;
+            display: inline-grid;
+            place-items: center;
+            overflow: hidden;
+            border-radius: 50%;
+            cursor: pointer;
+            background: linear-gradient(135deg, var(--info), var(--brand));
+        }
+        .profile-uploader img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+        .profile-uploader.has-image img {
+            display: block;
+        }
+        .profile-uploader.has-image span {
+            display: none;
+        }
+        .profile-uploader small {
+            position: absolute;
+            right: -2px;
+            bottom: -2px;
+            width: 18px;
+            height: 18px;
+            display: grid;
+            place-items: center;
+            color: #f8f3ed;
+            background: var(--brand);
+            border: 2px solid var(--surface);
+            border-radius: 50%;
+            font-size: 9px;
+        }
+
+        .doc-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            background: rgba(0, 0, 0, 0.72);
+            backdrop-filter: blur(8px);
+        }
+        .doc-modal.active {
+            display: flex;
+        }
+        .doc-box {
+            width: min(760px, 100%);
+            max-height: 90vh;
+            overflow-y: auto;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            box-shadow: var(--shadow);
+        }
+        .doc-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 18px;
+            border-bottom: 1px solid var(--border);
+        }
+        .doc-body {
+            padding: 18px;
+        }
+        .doc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 14px;
+        }
+        .doc-card {
+            min-height: 140px;
+            padding: 16px;
+            background: var(--surface-2);
+            border: 1px dashed var(--border);
+            border-radius: 14px;
+        }
+        .doc-card h4 {
+            margin: 0 0 10px;
+        }
+        .doc-card p {
+            margin: 4px 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+        .action-cell {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .action-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            background: rgba(0, 0, 0, 0.72);
+            backdrop-filter: blur(8px);
+        }
+        .action-modal.active {
+            display: flex;
+        }
+        .action-box {
+            width: min(560px, 100%);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        .action-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px;
+            border-bottom: 1px solid var(--border);
+        }
+        .action-body {
+            padding: 18px;
+        }
+        .form-grid {
+            display: grid;
+            gap: 12px;
+        }
+        .form-grid input,
+        .form-grid select,
+        .form-grid textarea {
+            width: 100%;
+            padding: 12px 14px;
+            color: var(--text);
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            outline: none;
+            font-family: inherit;
+        }
+        .toast {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            z-index: 12000;
+            display: none;
+            max-width: 360px;
+            padding: 14px 16px;
+            color: #f8f3ed;
+            background: linear-gradient(135deg, var(--brand), var(--brand-2));
+            border-radius: 14px;
+            box-shadow: var(--shadow);
+            font-weight: 700;
+        }
+        .toast.active {
+            display: block;
+        }
+
+        .support-card {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: center;
+            padding: 14px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+        }
+        .support-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .chat-box {
+            margin-top: 14px;
+            padding: 14px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+        }
+        .chat-message {
+            margin: 8px 0;
+            padding: 10px 12px;
+            border-radius: 12px;
+            background: rgba(106, 30, 42, 0.12);
+        }
+        .map-demo {
+            position: relative;
+            height: 220px;
+            background: radial-gradient(ellipse at center, #1a2332, #0b0d12);
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .pin {
+            position: absolute;
+            font-size: 28px;
+            animation: float 2s ease-in-out infinite;
+        }
+        .pin.p1 {
+            top: 30%;
+            left: 20%;
+            animation-delay: 0s;
+        }
+        .pin.p2 {
+            top: 60%;
+            left: 50%;
+            animation-delay: 0.5s;
+        }
+        .pin.p3 {
+            top: 25%;
+            left: 70%;
+            animation-delay: 1s;
+        }
+        .pin.p4 {
+            top: 70%;
+            left: 30%;
+            animation-delay: 1.5s;
+        }
+        @keyframes float {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+        .heatmap {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .heatmap>div {
+            padding: 10px 16px;
+            background: var(--surface-2);
+            border-radius: 8px;
+            font-weight: 600;
+            border-left: 4px solid var(--brand);
+        }
+
+        /* Force all buttons to be fully enabled */
+        .btn:not(:disabled) {
+            opacity: 1 !important;
+            cursor: pointer !important;
+            pointer-events: auto !important;
+        }
+        .btn:disabled {
+            opacity: 1 !important;
+            cursor: pointer !important;
+            pointer-events: auto !important;
+        }
+        .btn[disabled] {
+            opacity: 1 !important;
+            cursor: pointer !important;
+            pointer-events: auto !important;
+        }
+        /* Remove any default disabled styles */
+        button:disabled {
+            opacity: 1 !important;
+            cursor: pointer !important;
+            pointer-events: auto !important;
+        }
+        /* Ensure all buttons are clickable */
+        .btn {
+            pointer-events: auto !important;
+        }
+        .icon-btn {
+            pointer-events: auto !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ================= LOGIN SCREEN ================= -->
+
+    <section class="login-screen" id="loginScreen">
+
+        <div class="login-card">
+
+            <div class="brand-mark" style="margin:0 auto;">
+                <i class="fa-solid fa-burger"></i>
+            </div>
+
+            <h1>Mad Foods Admin</h1>
+
+            <p>Enterprise food delivery control center</p>
+
+            <label>Email</label>
+            <input type="email" id="loginEmail" value="admin@madfoods.com">
+
+            <label>Password</label>
+            <input type="password" id="loginPassword" value="admin123">
+
+            <button class="btn-primary" id="loginBtn">
+                Login to Dashboard
+            </button>
+
+            <small style="display:block; margin-top:8px;">
+                Demo Login: admin@madfoods.com / admin123
+            </small>
+
+        </div>
+
+    </section>
+
+    <!-- ================= APP SHELL ================= -->
+
+    <section class="shell hidden" id="appShell">
+
+        <!-- SIDEBAR -->
+
+        <aside class="sidebar" id="sidebar">
+
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-burger"></i>
+                </div>
+
+                <div>
+                    <div class="logo-title">Mad Foods</div>
+                    <div class="logo-sub">Enterprise Admin</div>
+                </div>
+            </div>
+
+            <div class="nav-group">Overview</div>
+
+            <a class="nav-link active" data-page="dashboard">
+                <span>📊</span> Master Dashboard
+            </a>
+
+            <a class="nav-link" data-page="analytics">
+                <span>📈</span> Revenue Analytics
+            </a>
+
+            <div class="nav-group">Marketplace</div>
+
+            <a class="nav-link" data-page="restaurants">
+                <span>🏪</span> Restaurant Management
+            </a>
+
+            <a class="nav-link" data-page="partners">
+                <span>🛵</span> Delivery Partners
+            </a>
+
+            <a class="nav-link" data-page="catalog">
+                <span>🍱</span> Food Catalog
+            </a>
+
+            <div class="nav-group">Operations</div>
+
+            <a class="nav-link" data-page="orders">
+                <span>📦</span> Orders Management
+            </a>
+
+            <a class="nav-link" data-page="payments">
+                <span>💳</span> Payments Management
+            </a>
+
+            <a class="nav-link" data-page="coupons">
+                <span>🎟️</span> Coupon Management
+            </a>
+
+            <div class="nav-group">System</div>
+
+            <a class="nav-link" data-page="support">
+                <span>📞</span> Support Center
+            </a>
+
+            <a class="nav-link" data-page="reports">
+                <span>📁</span> Reports Center
+            </a>
+
+            <a class="nav-link" data-page="settings">
+                <span>⚙️</span> System Settings
+            </a>
+
+        </aside>
+
+        <!-- MAIN -->
+
+        <main class="main">
+
+            <!-- TOPBAR -->
+
+            <header class="topbar">
+
+                <button class="icon-btn mobile-only" id="mobileMenuBtn">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+                <div class="search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="globalSearch" placeholder="Search orders, restaurants, catalog...">
+                </div>
+
+                <div class="top-actions">
+
+                    <button class="icon-btn" id="themeBtn">
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
+
+                    <button class="icon-btn" id="notificationBell">
+                        <i class="fa-solid fa-bell"></i>
+                        <span class="dot"></span>
+                    </button>
+
+                    <label class="profile-uploader" id="profileUploader" title="Change Profile Picture">
+                        <img id="profileImage" alt="Admin Profile">
+                        <span>AK</span>
+                        <small><i class="fa-solid fa-camera"></i></small>
+                        <input type="file" id="profileInput" accept="image/*" hidden>
+                    </label>
+
+                    <button class="icon-btn" id="logoutBtn">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+
+                </div>
+
+            </header>
+
+            <!-- CONTENT -->
+
+            <section class="content">
+
+                <div class="page-header">
+
+                    <div>
+                        <h1 id="pageTitle">Master Dashboard</h1>
+                        <p id="pageSubtitle">
+                            Complete enterprise view of restaurants, delivery, orders and revenue.
+                        </p>
+                    </div>
+
+                    <div class="page-actions">
+                        <button class="btn" id="filterBtn" data-action="filter">
+                            <i class="fa-solid fa-filter"></i>
+                            Filters
+                        </button>
+
+                        <button class="btn primary" id="exportBtn" data-action="export">
+                            <i class="fa-solid fa-file-export"></i>
+                            Export
+                        </button>
+                    </div>
+
+                </div>
+
+                <div id="pageContent"></div>
+
+            </section>
+
+        </main>
+
+    </section>
+
+
+
+    <!-- DOCUMENT PREVIEW MODAL -->
+    <div class="doc-modal" id="docModal">
+        <div class="doc-box">
+            <div class="doc-head">
+                <div>
+                    <h3 id="docTitle">Document Preview</h3>
+                    <p class="muted" id="docSubtitle">Verify details before approval.</p>
+                </div>
+                <button class="icon-btn" id="closeDocModal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="doc-body" id="docBody"></div>
+        </div>
+    </div>
+
+
+    <!-- ACTION MODAL FOR FILTERS, ADD NEW, CHAT -->
+    <div class="action-modal" id="actionModal">
+        <div class="action-box">
+            <div class="action-head">
+                <div>
+                    <h3 id="actionTitle">Action</h3>
+                    <p class="muted" id="actionSubtitle">Complete the selected operation.</p>
+                </div>
+                <button class="icon-btn" id="closeActionModal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="action-body" id="actionBody"></div>
+        </div>
+    </div>
+
+    <div class="toast" id="toastBox">Done</div>
+
+    <script>
+        const $ = (selector) => document.querySelector(selector);
+        const $$ = (selector) => document.querySelectorAll(selector);
+
+        const demo = {
+            // Customer data removed - keeping for reference but not displaying
+            customers: [],
+
+            restaurants: [
+                { id: "R201", name: "Andhra Spice", owner: "Ravi Kumar", status: "Approved" },
+                { id: "R202", name: "Rayalaseema Biryani", owner: "Kiran Reddy", status: "Pending" },
+                { id: "R203", name: "Coastal Tiffins", owner: "Suresh", status: "Approved" },
+                { id: "R204", name: "Madras Meals", owner: "Anil", status: "Rejected" }
+            ],
+
+            partners: [
+                { id: "D301", name: "Manoj", status: "Online" },
+                { id: "D302", name: "Akash", status: "Pending" },
+                { id: "D303", name: "Sai Kumar", status: "Online" },
+                { id: "D304", name: "Ramesh", status: "Offline" }
+            ],
+
+            foods: [
+                { name: "Chicken Biryani", category: "Biryani", restaurant: "Rayalaseema Biryani", price: 249, orders: 1240,
+                    status: "Live" },
+                { name: "Paneer Dosa", category: "Tiffins", restaurant: "Coastal Tiffins", price: 120, orders: 870,
+                    status: "Live" },
+                { name: "Andhra Meals", category: "Meals", restaurant: "Andhra Spice", price: 180, orders: 960,
+                    status: "Live" },
+                { name: "Veg Burger", category: "Fast Food", restaurant: "Mad Foods Kitchen", price: 99, orders: 740,
+                    status: "Paused" }
+            ],
+
+            orders: [
+                { id: "ORD-48201", customer: "Rahul Varma", restaurant: "Andhra Spice", amount: 450, status: "Delivered",
+                    payment: "Paid" },
+                { id: "ORD-48202", customer: "Priya Reddy", restaurant: "Coastal Tiffins", amount: 280, status: "Preparing",
+                    payment: "Paid" },
+                { id: "ORD-48203", customer: "Arjun Sai", restaurant: "Rayalaseema Biryani", amount: 520,
+                    status: "Out for Delivery", payment: "COD" },
+                { id: "ORD-48204", customer: "Meghana", restaurant: "Madras Meals", amount: 360, status: "Cancelled",
+                    payment: "Refunded" }
+            ],
+
+            payments: [
+                { txn: "TXN-9001", order: "ORD-48201", method: "UPI", amount: 450, status: "Success" },
+                { txn: "TXN-9002", order: "ORD-48202", method: "Card", amount: 280, status: "Success" },
+                { txn: "TXN-9003", order: "ORD-48203", method: "COD", amount: 520, status: "Pending" },
+                { txn: "TXN-9004", order: "ORD-48204", method: "Wallet", amount: 360, status: "Refunded" }
+            ],
+
+            reviews: [
+                { user: "Rahul", restaurant: "Andhra Spice", rating: 5, review: "Excellent food", status: "Published" },
+                { user: "Priya", restaurant: "Coastal Tiffins", rating: 4, review: "Good packaging", status: "Published" },
+                { user: "Arjun", restaurant: "Rayalaseema Biryani", rating: 2, review: "Late delivery", status: "Review" }
+            ],
+
+            coupons: [
+                { code: "MADIPL50", type: "IPL Offer", discount: "50%", used: 340, status: "Active" },
+                { code: "NEWUSER120", type: "New User", discount: "₹120", used: 980, status: "Active" },
+                { code: "FESTIVE25", type: "Festival", discount: "25%", used: 210, status: "Expired" }
+            ],
+
+            logs: [
+                { time: "10:22 AM", user: "Admin", action: "Approved restaurant Andhra Spice" },
+                { time: "11:10 AM", user: "Support", action: "Resolved delivery complaint" },
+                { time: "12:02 PM", user: "Finance", action: "Exported payment report" }
+            ],
+
+            notifications: [
+                { id: "N001", title: "New Restaurant Added", message: "Andhra Spice has joined the platform", status: "Sent" },
+                { id: "N002", title: "Order Alert", message: "High volume orders detected in Vijayawada", status: "Draft" },
+                { id: "N003", title: "Promotion", message: "Weekend biryani offer launched", status: "Sent" }
+            ],
+
+            cmsItems: [
+                { id: "CMS01", title: "Homepage Banner", type: "Banner", status: "Published", lastEdited: "2 hours ago" },
+                { id: "CMS02", title: "Restaurant Listing", type: "Page", status: "Draft", lastEdited: "1 day ago" },
+                { id: "CMS03", title: "Help Center FAQ", type: "Article", status: "Published", lastEdited: "3 days ago" }
+            ]
+        };
+
+        function saveDemoData() {}
+        function getData() {
+            return demo;
+        }
+        let data = getData();
+
+        async function syncAdminData() {
+            try {
+                const stats = await apiFetch('/admin/stats');
+                const restaurants = await apiFetch('/admin/restaurants');
+                const partners = await apiFetch('/admin/partners');
+                const foods = await apiFetch('/admin/foods');
+                const orders = await apiFetch('/admin/orders');
+                const payments = await apiFetch('/admin/payments');
+                const reviews = await apiFetch('/admin/reviews');
+                const logs = await apiFetch('/admin/logs');
+
+                data.restaurants = restaurants;
+                data.partners = partners;
+                data.foods = foods;
+                data.orders = orders;
+                data.payments = payments;
+                data.reviews = reviews;
+                data.logs = logs;
+            } catch (e) {
+                console.error("Sync error: ", e);
+            }
+        }
+
+
+        const pages = {
+            dashboard: {
+                title: "Master Dashboard",
+                subtitle: "Complete enterprise overview of the Mad Foods delivery platform.",
+                render: renderDashboard
+            },
+            restaurants: {
+                title: "Restaurant Management",
+                subtitle: "Approve, monitor and manage restaurants.",
+                render: renderRestaurantApprovals
+            },
+            partners: {
+                title: "Delivery Partner Management",
+                subtitle: "Manage delivery partners, verification and performance.",
+                render: renderPartnerApprovals
+            },
+            catalog: {
+                title: "Food Catalog Management",
+                subtitle: "Manage food items, categories, pricing and availability.",
+                render: () => tablePage("Food Catalog", data.foods, ["name", "category", "restaurant", "price", "orders",
+                    "status"
+                ])
+            },
+            orders: {
+                title: "Orders Management",
+                subtitle: "Track placed, preparing, delivered and cancelled orders.",
+                render: () => tablePage("Orders", data.orders, ["id", "customer", "restaurant", "amount", "status",
+                    "payment"
+                ])
+            },
+            payments: {
+                title: "Payments Management",
+                subtitle: "Track payments, refunds and commissions.",
+                render: () => tablePage("Payments", data.payments, ["txn", "order", "method", "amount", "status"])
+            },
+            coupons: {
+                title: "Coupon Management",
+                subtitle: "Create and monitor offers, campaigns and coupon usage.",
+                render: () => tablePage("Coupons", data.coupons, ["code", "type", "discount", "used", "status"])
+            },
+            analytics: {
+                title: "Revenue Analytics",
+                subtitle: "Revenue charts, order trends, user growth and performance.",
+                render: renderAnalytics
+            },
+            reports: {
+                title: "Reports Center",
+                subtitle: "Download operational and finance reports.",
+                render: renderReports
+            },
+            settings: {
+                title: "System Settings",
+                subtitle: "Manage platform settings, tax, support and security.",
+                render: renderSettings
+            },
+            support: {
+                title: "Support Center",
+                subtitle: "Receive calls, live chats and restaurant complaints.",
+                render: renderSupportCenter
+            }
+        };
+
+        function metricCard(label, value, icon, type = "brand", delta = "+12%") {
+            return `
+        <div class="kpi ${type}">
+            <div class="kpi-label">${label}</div>
+            <div class="kpi-value">${value}</div>
+            <div class="kpi-delta up">▲ ${delta}</div>
+            <div class="kpi-icon">${icon}</div>
+        </div>
+    `;
+        }
+
+        function renderDashboard() {
+            const revenue = data.orders.reduce((sum, order) => sum + Number(order.amount || 0), 0);
+
+            $("#pageContent").innerHTML = `
+        <div class="kpi-grid">
+            ${metricCard("Total Restaurants", data.restaurants.length, "🏪", "brand")}
+            ${metricCard("Delivery Partners", data.partners.length, "🛵", "success")}
+            ${metricCard("Total Orders", data.orders.length, "📦", "warning")}
+            ${metricCard("Revenue", "₹" + revenue.toLocaleString("en-IN"), "💰", "brand")}
+            ${metricCard("Growth Rate", "27.8%", "📈", "success")}
+            ${metricCard("Popular Foods", "Biryani", "🍱", "warning")}
+            ${metricCard("Top Rated Restaurants", "4.8 ★", "⭐", "info")}
+        </div>
+
+        <div class="grid cols-12">
+            <div class="card col-span-8">
+                <div class="card-head">
+                    <div>
+                        <div class="card-title">Revenue Charts</div>
+                        <div class="card-sub">Monthly revenue performance</div>
+                    </div>
+                </div>
+                <div class="chart-box">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card col-span-4">
+                <div class="card-head">
+                    <div>
+                        <div class="card-title">Delivery Performance</div>
+                        <div class="card-sub">Partner success overview</div>
+                    </div>
+                </div>
+                <div class="chart-box">
+                    <canvas id="deliveryChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card col-span-6">
+                <div class="card-head">
+                    <div>
+                        <div class="card-title">Top Rated Restaurants</div>
+                        <div class="card-sub">Best performing partners</div>
+                    </div>
+                </div>
+                ${simpleTable(data.restaurants, ["name", "status"])}
+            </div>
+
+            <div class="card col-span-6">
+                <div class="card-head">
+                    <div>
+                        <div class="card-title">Real-Time Order Monitoring</div>
+                        <div class="card-sub">Latest live orders</div>
+                    </div>
+                </div>
+                <div class="live-list">
+                    ${data.orders.map(order => `
+                        <div class="live-item">
+                            <div>
+                                <b>${order.id}</b>
+                                <div class="tiny muted">${order.restaurant} • ${order.customer}</div>
+                            </div>
+                            <span class="badge ${badgeClass(order.status)}">${order.status}</span>
+                        </div>
+                    `).join("")}
+                </div>
+            </div>
+        </div>
+    `;
+
+            drawCharts();
+        }
+
+        function renderAnalytics() {
+            $("#pageContent").innerHTML = `
+        <div class="grid cols-12">
+            <div class="card col-span-6">
+                <div class="card-head">
+                    <div>
+                        <div class="card-title">Order Trends</div>
+                        <div class="card-sub">Weekly order movement</div>
+                    </div>
+                </div>
+                <div class="chart-box">
+                    <canvas id="ordersChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card col-span-6">
+                <div class="card-head">
+                    <div>
+                        <div class="card-title">User Growth</div>
+                        <div class="card-sub">Customer acquisition</div>
+                    </div>
+                </div>
+                <div class="chart-box">
+                    <canvas id="growthChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card col-span-6">
+                <div class="card-head">
+                    <div>
+                        <div class="card-title">Geographic Heatmap</div>
+                        <div class="card-sub">Area-wise order density</div>
+                    </div>
+                </div>
+                <div class="heatmap">
+                    <div style="--size:90%">Vijayawada ██████████ 90%</div>
+                    <div style="--size:72%">Kadapa ████████░░ 72%</div>
+                    <div style="--size:65%">Vizag ██████░░░░ 65%</div>
+                    <div style="--size:48%">Tirupati ████░░░░░░ 48%</div>
+                </div>
+            </div>
+
+            <div class="card col-span-6">
+                <div class="card-head">
+                    <div>
+                        <div class="card-title">Restaurant Performance</div>
+                        <div class="card-sub">Revenue by restaurant</div>
+                    </div>
+                </div>
+                ${simpleTable(data.restaurants, ["name", "status"])}
+            </div>
+        </div>
+    `;
+
+            new Chart($("#ordersChart"), {
+                type: "line",
+                data: chartData(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], [120, 170, 140, 220, 260, 310, 390],
+                    "Orders")
+            });
+
+            new Chart($("#growthChart"), {
+                type: "bar",
+                data: chartData(["Jan", "Feb", "Mar", "Apr", "May", "Jun"], [200, 360, 520, 700, 920, 1200], "Users")
+            });
+        }
+
+        function renderReports() {
+            $("#pageContent").innerHTML = `
+                <div class="grid cols-3">
+                    <div class="card">
+                        <div class="card-head">
+                            <div>
+                                <div class="card-title">Daily Report</div>
+                                <div class="card-sub">Orders, revenue and support summary.</div>
+                            </div>
+                        </div>
+                        <button class="btn primary report-download-btn" data-report="Daily Report">Download</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-head">
+                            <div>
+                                <div class="card-title">Revenue Report</div>
+                                <div class="card-sub">Finance and commission details.</div>
+                            </div>
+                        </div>
+                        <button class="btn primary report-download-btn" data-report="Revenue Report">Download</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-head">
+                            <div>
+                                <div class="card-title">Partner Report</div>
+                                <div class="card-sub">Delivery performance details.</div>
+                            </div>
+                        </div>
+                        <button class="btn primary report-download-btn" data-report="Partner Report">Download</button>
+                    </div>
+                </div>
+                <div class="card" style="margin-top:16px;">
+                    <div class="card-head">
+                        <div>
+                            <div class="card-title">Generate Custom Report</div>
+                            <div class="card-sub">Select date range and modules</div>
+                        </div>
+                    </div>
+                    <div class="form-grid" style="grid-template-columns: 1fr 1fr auto;">
+                        <input type="date" id="reportFrom" value="2024-01-01">
+                        <input type="date" id="reportTo" value="2024-12-31">
+                        <button class="btn primary" id="generateReportBtn">Generate</button>
+                    </div>
+                </div>
+            `;
+
+            document.querySelectorAll(".report-download-btn").forEach(btn => {
+                btn.addEventListener("click", function() {
+                    const reportName = this.dataset.report;
+                    const revenue = data.orders.reduce((sum, order) => sum + Number(order.amount || 0), 0);
+                    const content =
+                        `MAD FOODS ${reportName.toUpperCase()}\n\nTotal Restaurants: ${data.restaurants.length}\nDelivery Partners: ${data.partners.length}\nTotal Orders: ${data.orders.length}\nRevenue: ₹${revenue.toLocaleString("en-IN")}\nGenerated: ${new Date().toLocaleString()}\n`;
+                    downloadTextFile(`madfoods-${reportName.toLowerCase().replaceAll(" ", "-")}.txt`, content);
+                    showToast(`${reportName} downloaded!`);
+                });
+            });
+
+            const genBtn = document.getElementById("generateReportBtn");
+            if (genBtn) {
+                genBtn.addEventListener("click", function() {
+                    const from = document.getElementById("reportFrom").value;
+                    const to = document.getElementById("reportTo").value;
+                    const revenue = data.orders.reduce((sum, order) => sum + Number(order.amount || 0), 0);
+                    const content =
+                        `MAD FOODS CUSTOM REPORT\nPeriod: ${from} to ${to}\n\nTotal Restaurants: ${data.restaurants.length}\nDelivery Partners: ${data.partners.length}\nTotal Orders: ${data.orders.length}\nRevenue: ₹${revenue.toLocaleString("en-IN")}\nGenerated: ${new Date().toLocaleString()}\n`;
+                    downloadTextFile(`madfoods-custom-report-${from}-to-${to}.txt`, content);
+                    showToast("Custom report generated!");
+                });
+            }
+        }
+
+        function renderSettings() {
+            $("#pageContent").innerHTML = `
+                <div class="grid cols-2">
+                    <div class="card">
+                        <div class="card-head">
+                            <div>
+                                <div class="card-title">Platform Settings</div>
+                                <div class="card-sub">Tax, delivery radius, commission</div>
+                            </div>
+                        </div>
+                        <div class="form-grid">
+                            <div><label>Tax Rate (%)</label><input id="taxRate" value="18" type="number"></div>
+                            <div><label>Delivery Radius (km)</label><input id="deliveryRadius" value="10" type="number"></div>
+                            <div><label>Commission (%)</label><input id="commission" value="15" type="number"></div>
+                            <button class="btn primary" id="saveSettingsBtn">Save Settings</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-head">
+                            <div>
+                                <div class="card-title">Theme & Appearance</div>
+                                <div class="card-sub">Dark and light mode available</div>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;">
+                            <button class="btn" id="themeDarkBtn">🌙 Dark</button>
+                            <button class="btn" id="themeLightBtn">☀️ Light</button>
+                            <button class="btn" id="themeSystemBtn">🔄 System</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style="margin-top:16px;">
+                    <div class="card-head">
+                        <div>
+                            <div class="card-title">Security</div>
+                            <div class="card-sub">Admin session and access control</div>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                        <button class="btn warning" id="changePasswordBtn">Change Password</button>
+                        <button class="btn danger" id="logoutAllBtn">Logout All Sessions</button>
+                        <button class="btn" id="exportDataBtn">Export All Data</button>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById("saveSettingsBtn")?.addEventListener("click", function() {
+                const tax = document.getElementById("taxRate").value;
+                const radius = document.getElementById("deliveryRadius").value;
+                const commission = document.getElementById("commission").value;
+                showToast(`Settings saved! Tax: ${tax}%, Radius: ${radius}km, Commission: ${commission}%`);
+            });
+
+            document.getElementById("themeDarkBtn")?.addEventListener("click", function() {
+                document.documentElement.setAttribute("data-theme", "dark");
+                showToast("Dark theme applied");
+            });
+            document.getElementById("themeLightBtn")?.addEventListener("click", function() {
+                document.documentElement.setAttribute("data-theme", "light");
+                showToast("Light theme applied");
+            });
+            document.getElementById("themeSystemBtn")?.addEventListener("click", function() {
+                const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+                document.documentElement.setAttribute("data-theme", prefersDark ? "dark" : "light");
+                showToast("System theme applied");
+            });
+
+            document.getElementById("changePasswordBtn")?.addEventListener("click", function() {
+                openActionModal("Change Password", "Update your admin password", `
+                    <div class="form-grid">
+                        <input type="password" placeholder="Current password">
+                        <input type="password" placeholder="New password">
+                        <input type="password" placeholder="Confirm new password">
+                        <button class="btn primary" id="changePwdConfirmBtn">Update Password</button>
+                    </div>
+                `);
+                document.getElementById("changePwdConfirmBtn")?.addEventListener("click", function() {
+                    closeActionModal();
+                    showToast("Password updated successfully!");
+                });
+            });
+
+            document.getElementById("logoutAllBtn")?.addEventListener("click", function() {
+                if (confirm("Are you sure you want to logout all sessions?")) {
+                    showToast("All sessions logged out!");
+                }
+            });
+
+            document.getElementById("exportDataBtn")?.addEventListener("click", function() {
+                const content = JSON.stringify(data, null, 2);
+                downloadTextFile("madfoods-full-export.json", content);
+                showToast("All data exported!");
+            });
+        }
+
+        function renderSupportCenter() {
+            $("#pageContent").innerHTML = `
+                <div class="grid cols-2">
+                    <div class="card">
+                        <div class="card-head">
+                            <div>
+                                <div class="card-title">📞 Incoming Support Calls</div>
+                                <div class="card-sub">Restaurant support hotline</div>
+                            </div>
+                            <span class="badge warning">3 Live</span>
+                        </div>
+                        <div class="live-list">
+                            ${[
+                                ["Andhra Spice", "Payment settlement issue"],
+                                ["Coastal Tiffins", "Order delay complaint"],
+                                ["Rayalaseema Biryani", "Menu approval help"]
+                            ].map(call => `
+                                <div class="support-card">
+                                    <div>
+                                        <b>${call[0]}</b>
+                                        <div class="tiny muted">${call[1]}</div>
+                                    </div>
+                                    <div class="support-actions">
+                                        <button class="btn success js-answer-call">Answer</button>
+                                        <button class="btn js-resolve-ticket">Resolve</button>
+                                    </div>
+                                </div>
+                            `).join("")}
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-head">
+                            <div>
+                                <div class="card-title">💬 Live Restaurant Chats</div>
+                                <div class="card-sub">Real-time support chats</div>
+                            </div>
+                            <span class="badge success">Online</span>
+                        </div>
+                        <div class="live-list">
+                            ${[
+                                ["Madras Meals", "Refund clarification"],
+                                ["Coastal Tiffins", "Need menu photo update"],
+                                ["Andhra Spice", "Coupon campaign support"]
+                            ].map(chat => `
+                                <div class="support-card">
+                                    <div>
+                                        <b>${chat[0]}</b>
+                                        <div class="tiny muted">${chat[1]}</div>
+                                    </div>
+                                    <button class="btn primary js-open-chat" data-restaurant="${chat[0]}" data-topic="${chat[1]}">Open Chat</button>
+                                </div>
+                            `).join("")}
+                        </div>
+                        <div id="chatPreview"></div>
+                    </div>
+                </div>
+                <div class="card" style="margin-top:16px;">
+                    <div class="card-head">
+                        <div>
+                            <div class="card-title">📋 Recent Support Tickets</div>
+                            <div class="card-sub">All open and resolved tickets</div>
+                        </div>
+                        <button class="btn primary" id="newTicketBtn">+ New Ticket</button>
+                    </div>
+                    ${simpleTable([
+                        { id: "T-001", restaurant: "Andhra Spice", issue: "Payment failed", status: "Open", priority: "High" },
+                        { id: "T-002", restaurant: "Coastal Tiffins", issue: "Delivery delay", status: "In Progress", priority: "Medium" },
+                        { id: "T-003", restaurant: "Rayalaseema Biryani", issue: "Menu update", status: "Resolved", priority: "Low" }
+                    ], ["id", "restaurant", "issue", "status", "priority"])}
+                </div>
+            `;
+
+            document.getElementById("newTicketBtn")?.addEventListener("click", function() {
+                openActionModal("New Support Ticket", "Create a new ticket", `
+                    <div class="form-grid">
+                        <input id="ticketRestaurant" placeholder="Restaurant name">
+                        <input id="ticketIssue" placeholder="Issue summary">
+                        <select id="ticketPriority">
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                            <option value="Urgent">Urgent</option>
+                        </select>
+                        <textarea id="ticketDesc" placeholder="Full description" rows="3"></textarea>
+                        <button class="btn primary" id="submitTicketBtn">Submit Ticket</button>
+                    </div>
+                `);
+                document.getElementById("submitTicketBtn")?.addEventListener("click", function() {
+                    const restaurant = document.getElementById("ticketRestaurant").value.trim();
+                    if (!restaurant) {
+                        showToast("Please enter restaurant name");
+                        return;
+                    }
+                    closeActionModal();
+                    showToast(`Ticket created for ${restaurant}!`);
+                });
+            });
+        }
+
+        function tablePage(title, rows, keys) {
+            $("#pageContent").innerHTML = `
+        <div class="table-wrap">
+            <div class="table-controls">
+                <div class="search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input placeholder="Search ${title.toLowerCase()}..." class="table-search-input">
+                </div>
+                <button class="btn" data-action="filter">Filters</button>
+                <button class="btn primary" data-action="add">Add New</button>
+            </div>
+            ${simpleTable(rows, keys)}
+        </div>
+    `;
+
+            const searchInput = document.querySelector(".table-search-input");
+            if (searchInput) {
+                searchInput.addEventListener("input", function() {
+                    const keyword = this.value.toLowerCase().trim();
+                    const rows = document.querySelectorAll(".table-wrap tbody tr");
+                    rows.forEach(row => {
+                        const text = row.textContent.toLowerCase();
+                        row.style.display = text.includes(keyword) ? "" : "none";
+                    });
+                });
+            }
+        }
+
+        function simpleTable(rows, keys) {
+            if (!rows || !rows.length) {
+                return `<p class="muted" style="padding:16px;">No data available</p>`;
+            }
+
+            return `
+        <table>
+            <thead>
+                <tr>
+                    ${keys.map(key => `<th>${formatTitle(key)}</th>`).join("")}
+                </tr>
+            </thead>
+            <tbody>
+                ${rows.map(row => `
+                    <tr>
+                        ${keys.map(key => `<td>${formatCell(row, key)}</td>`).join("")}
+                    </tr>
+                `).join("")}
+            </tbody>
+        </table>
+    `;
+        }
+
+        function formatCell(row, key) {
+            let value = row[key];
+
+            // Resolve custom DTO key fallbacks to prevent undefined values
+            if (key === "name" && value === undefined) {
+                value = row.nameString || row.name || "Unnamed Item";
+            }
+            if (key === "customer" && value === undefined) {
+                value = row.customerName || "Walk-in Customer";
+            }
+            if (key === "restaurant" && value === undefined) {
+                value = row.restaurantName || "Mad Foods Kitchen";
+            }
+            if (key === "payment" && value === undefined) {
+                value = row.paymentMethod || "COD";
+            }
+            if (key === "status" && value === undefined && row.isAvailable !== undefined) {
+                value = row.isAvailable ? "active" : "inactive";
+            }
+            if (key === "orders" && value === undefined) {
+                value = 0;
+            }
+
+            if (value && typeof value === 'object') {
+                return value.en || value.name || JSON.stringify(value);
+            }
+            if (key === "status" || key === "payment") {
+                return `<span class="badge ${badgeClass(value)}">${value}</span>`;
+            }
+
+            if (key === "rating") {
+                return `⭐ ${value}`;
+            }
+
+            if (key === "revenue" || key === "amount" || key === "price") {
+                return "₹" + Number(value).toLocaleString("en-IN");
+            }
+
+            if (key === "message" && value && value.length > 30) {
+                return value.substring(0, 30) + "...";
+            }
+
+            return value;
+        }
+
+        function formatTitle(key) {
+            return key
+                .replace(/([A-Z])/g, " $1")
+                .replace(/^./, char => char.toUpperCase());
+        }
+
+        function badgeClass(value) {
+            value = String(value).toLowerCase();
+
+            if (["active", "approved", "delivered", "success", "paid", "published", "online", "live", "sent", "resolved"]
+                .includes(value)) {
+                return "success";
+            }
+
+            if (["pending", "preparing", "out for delivery", "cod", "review", "draft", "in progress"].includes(value)) {
+                return "warning";
+            }
+
+            if (["cancelled", "rejected", "refunded", "offline", "expired", "paused", "inactive"].includes(value)) {
+                return "danger";
+            }
+
+            return "info";
+        }
+
+        function chartData(labels, values, label) {
+            return {
+                labels,
+                datasets: [{
+                    label,
+                    data: values,
+                    borderColor: "#6a1e2a",
+                    backgroundColor: "rgba(106, 30, 42, 0.18)",
+                    tension: 0.4,
+                    fill: true
+                }]
+            };
+        }
+
+        function drawCharts() {
+            new Chart($("#revenueChart"), {
+                type: "line",
+                data: chartData(["Jan", "Feb", "Mar", "Apr", "May", "Jun"], [42000, 76000, 98000, 125000, 174000, 218000],
+                    "Revenue")
+            });
+
+            new Chart($("#deliveryChart"), {
+                type: "doughnut",
+                data: {
+                    labels: ["Delivered", "Delayed", "Cancelled"],
+                    datasets: [{
+                        data: [82, 12, 6],
+                        backgroundColor: ["#2d7a4a", "#b68b40", "#b13e4b"]
+                    }]
+                }
+            });
+        }
+
+        async function loadPage(page) {
+            const pageConfig = pages[page];
+
+            if (pageConfig) {
+                try {
+                    await syncAdminData();
+                } catch (e) {
+                    console.error(e);
+                }
+                $("#pageTitle").textContent = pageConfig.title;
+                $("#pageSubtitle").textContent = pageConfig.subtitle;
+                pageConfig.render();
+            }
+        }
+
+        function initNavigation() {
+            $$(".nav-link").forEach(link => {
+                link.addEventListener("click", () => {
+                    $$(".nav-link").forEach(item => item.classList.remove("active"));
+                    link.classList.add("active");
+                    loadPage(link.dataset.page);
+                    $("#sidebar").classList.remove("open");
+                });
+            });
+        }
+
+        function initAuth() {
+            $("#loginBtn").addEventListener("click", async () => {
+                const email = $("#loginEmail").value.trim();
+                const password = $("#loginPassword").value;
+                
+                try {
+                    const res = await apiFetch('/auth/login', {
+                        method: 'POST',
+                        body: { email, password }
+                    });
+                    
+                    if (res.role !== 'ADMIN') {
+                        alert("Access Denied: Admin role required.");
+                        return;
+                    }
+                    
+                    localStorage.setItem('mad_token', res.token);
+                    localStorage.setItem('mad_user', JSON.stringify(res));
+                    
+                    await syncAdminData();
+                    
+                    $("#loginScreen").classList.add("hidden");
+                    $("#appShell").classList.remove("hidden");
+                    loadPage("dashboard");
+                    showToast("Welcome back, Admin!");
+                } catch (e) {
+                    alert("Login failed: " + e.message);
+                }
+            });
+
+            $("#logoutBtn").addEventListener("click", () => {
+                if (confirm("Are you sure you want to logout?")) {
+                    const userStr = localStorage.getItem('mad_user');
+                    if (userStr) {
+                        const user = JSON.parse(userStr);
+                        apiFetch(`/auth/logout?email=${encodeURIComponent(user.email)}`, { method: 'POST' }).catch(() => {});
+                    }
+                    localStorage.removeItem('mad_token');
+                    localStorage.removeItem('mad_user');
+                    $("#appShell").classList.add("hidden");
+                    $("#loginScreen").classList.remove("hidden");
+                    showToast("Logged out successfully");
+                }
+            });
+        }
+
+        function initTheme() {
+            $("#themeBtn").addEventListener("click", () => {
+                const html = document.documentElement;
+                const current = html.getAttribute("data-theme");
+                const next = current === "dark" ? "light" : "dark";
+                html.setAttribute("data-theme", next);
+                const icon = $("#themeBtn").querySelector("i");
+                icon.className = next === "dark" ? "fa-solid fa-moon" : "fa-solid fa-sun";
+                showToast(`${next.charAt(0).toUpperCase() + next.slice(1)} mode activated`);
+            });
+        }
+
+        function initMobile() {
+            $("#mobileMenuBtn").addEventListener("click", () => {
+                $("#sidebar").classList.toggle("open");
+            });
+        }
+
+        function normalizeApprovalData() {
+            let stored = getData();
+
+            stored.restaurants = stored.restaurants.map(item => ({
+                ...item,
+                documents: item.documents || {
+                    license: "FSSAI-AP-2026-" + item.id,
+                    gst: "GSTIN-37ABCDE" + item.id,
+                    ownerId: "Aadhaar verified",
+                    menu: "Menu and dish photos uploaded"
+                }
+            }));
+
+            stored.partners = stored.partners.map(item => ({
+                ...item,
+                documents: item.documents || {
+                    aadhaar: "Aadhaar verified",
+                    license: "DL-AP-2026-" + item.id,
+                    address: "Address proof uploaded"
+                }
+            }));
+
+            localStorage.setItem("madFoodsDemo", JSON.stringify(stored));
+            return stored;
+        }
+
+        let appData = normalizeApprovalData();
+        Object.assign(data, appData);
+
+        /* ================= PROFILE PICTURE ================= */
+
+        function initProfileUpload() {
+            const input = $("#profileInput");
+            const img = $("#profileImage");
+            const box = $("#profileUploader");
+            const savedImage = localStorage.getItem("madFoodsAdminProfileImage");
+
+            if (savedImage) {
+                img.src = savedImage;
+                box.classList.add("has-image");
+            }
+
+            input.addEventListener("change", function() {
+                const file = this.files[0];
+
+                if (!file) {
+                    return;
+                }
+
+                const reader = new FileReader();
+
+                reader.onload = function(event) {
+                    img.src = event.target.result;
+                    box.classList.add("has-image");
+                    localStorage.setItem("madFoodsAdminProfileImage", event.target.result);
+                    showToast("Profile picture updated!");
+                };
+
+                reader.readAsDataURL(file);
+            });
+        }
+
+        /* ================= DOCUMENT PREVIEW ================= */
+
+        function openDocumentPreview(type, id) {
+            const source = type === "restaurant" ? data.restaurants : data.partners;
+            const item = source.find(row => row.id === id);
+
+            if (!item) {
+                return;
+            }
+
+            // Always construct the complete set of required documents to list missing ones
+            const docs = {};
+            if (type === "restaurant") {
+                docs["GST Document"] = item.docGst || null;
+                docs["FSSAI License"] = item.docFssai || null;
+                docs["PAN Card"] = item.docPan || null;
+                docs["Menu Document"] = item.docMenu || null;
+                docs["Logo / Image"] = item.logoUrl || null;
+            } else {
+                docs["Driver Photo"] = item.photoUrl || null;
+                docs["Driving License"] = item.licenseUrl || null;
+                docs["Registration Certificate (RC)"] = item.rcUrl || null;
+                docs["Aadhaar Card"] = item.aadharUrl || null;
+            }
+
+            const displayName = type === "restaurant" ? 
+                (item.nameString || (item.name ? (item.name.en || item.name) : '') || 'Restaurant') :
+                (item.fullName || item.name || 'Partner');
+
+            $("#docTitle").textContent = displayName + " - " + (type === "restaurant" ? "Restaurant Documents" : "Delivery Partner Documents");
+
+            $("#docSubtitle").textContent = "Preview all submitted documents before accepting or rejecting.";
+
+            $("#docBody").innerHTML = `
+                <div class="doc-grid">
+                    ${Object.entries(docs).map(([key, value]) => {
+                        let valueHtml = '';
+                        if (value && (value.startsWith('http://') || value.startsWith('https://') || value.startsWith('/') || value.startsWith('file:///'))) {
+                            let absoluteUrl = value;
+                            if (value.startsWith('/')) {
+                                absoluteUrl = 'http://localhost:8080' + value;
+                            }
+                            valueHtml = `<a href="${absoluteUrl}" target="_blank" style="color:var(--primary);font-weight:bold;text-decoration:underline;word-break:break-all;">${value}</a>`;
+                        } else {
+                            valueHtml = value || '<span style="color:var(--text-light);font-style:italic;">Not Submitted</span>';
+                        }
+                        return `
+                            <div class="doc-card" style="border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; background: var(--bg-card);">
+                                <h4>${formatTitle(key)}</h4>
+                                <p style="margin: 8px 0; font-size: 0.85rem; font-weight: 500;">${valueHtml}</p>
+                                <p style="font-size: 0.75rem; color: var(--text-light);"><strong>Status:</strong> ${value ? 'Submitted Document' : 'Pending Upload'}</p>
+                            </div>
+                        `;
+                    }).join("")}
+                </div>
+                <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;">
+                    <button class="btn success js-status" data-type="${type}" data-id="${id}" data-status="Approved">
+                        Accept Request
+                    </button>
+                    <button class="btn danger js-status" data-type="${type}" data-id="${id}" data-status="Rejected">
+                        Reject Request
+                    </button>
+                </div>
+            `;
+
+            $("#docModal").classList.add("active");
+        }
+
+        function closeDocumentPreview() {
+            $("#docModal").classList.remove("active");
+        }
+
+        async function updateRequestStatus(type, id, status) {
+            const source = type === "restaurant" ? data.restaurants : data.partners;
+            const item = source.find(row => row.id === id);
+
+            if (!item) {
+                return;
+            }
+
+            const numericId = item.numericId;
+
+            try {
+                if (type === "restaurant") {
+                    if (status === "Approved") {
+                        await apiFetch(`/admin/restaurants/${numericId}/approve`, { method: 'POST' });
+                    } else {
+                        const reason = prompt("Enter rejection reason for restaurant " + item.name + ":", "Documents invalid");
+                        if (reason === null) return; // cancel
+                        await apiFetch(`/admin/restaurants/${numericId}/reject?reason=${encodeURIComponent(reason)}`, { method: 'POST' });
+                    }
+                } else if (type === "partner") {
+                    if (status === "Approved") {
+                        await apiFetch(`/admin/partners/${numericId}/approve`, { method: 'POST' });
+                    } else {
+                        const reason = prompt("Enter rejection reason for partner " + item.name + ":", "Documents invalid");
+                        if (reason === null) return; // cancel
+                        await apiFetch(`/admin/partners/${numericId}/reject?reason=${encodeURIComponent(reason)}`, { method: 'POST' });
+                    }
+                }
+
+                closeDocumentPreview();
+                showToast(`Request updated successfully!`);
+
+                const activePage = document.querySelector(".nav-link.active")?.dataset.page || "dashboard";
+                loadPage(activePage);
+            } catch (err) {
+                alert("Operation failed: " + err.message);
+            }
+        }
+
+        function approvalStatusClass(status) {
+            const value = String(status).toLowerCase();
+
+            if (["approved", "accepted", "online", "active"].includes(value)) {
+                return "success";
+            }
+
+            if (["pending", "review"].includes(value)) {
+                return "warning";
+            }
+
+            if (["rejected", "offline"].includes(value)) {
+                return "danger";
+            }
+
+            return "info";
+        }
+
+        function renderRestaurantApprovals() {
+            $("#pageContent").innerHTML = `
+                <div class="table-wrap">
+                    <div class="table-controls">
+                        <div class="search">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input placeholder="Search restaurant requests..." class="table-search-input">
+                        </div>
+                        <button class="btn primary" data-action="add" data-add-type="restaurants">Add Restaurant</button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Restaurant</th>
+                                <th>Owner</th>
+                                <th>Status</th>
+                                <th>Documents & Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.restaurants.map(item => `
+                                <tr>
+                                    <td>${item.nameString || (item.name && item.name.en) || ''}</td>
+                                    <td>${item.ownerName || ''}</td>
+                                    <td><span class="badge ${approvalStatusClass(item.status)}">${item.status}</span></td>
+                                    <td>
+                                        <div class="action-cell">
+                                            <button class="btn js-preview" data-type="restaurant" data-id="${item.id}">Preview Docs</button>
+                                            <button class="btn success js-status" data-type="restaurant" data-id="${item.id}" data-status="Approved">Accept</button>
+                                            <button class="btn danger js-status" data-type="restaurant" data-id="${item.id}" data-status="Rejected">Reject</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `).join("")}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            const searchInput = document.querySelector(".table-wrap .table-search-input");
+            if (searchInput) {
+                searchInput.addEventListener("input", function() {
+                    const keyword = this.value.toLowerCase().trim();
+                    const rows = document.querySelectorAll(".table-wrap tbody tr");
+                    rows.forEach(row => {
+                        const text = row.textContent.toLowerCase();
+                        row.style.display = text.includes(keyword) ? "" : "none";
+                    });
+                });
+            }
+        }
+
+        function renderPartnerApprovals() {
+            $("#pageContent").innerHTML = `
+                <div class="table-wrap">
+                    <div class="table-controls">
+                        <div class="search">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input placeholder="Search delivery partner requests..." class="table-search-input">
+                        </div>
+                        <button class="btn primary" data-action="add" data-add-type="partners">Add Partner</button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Status</th>
+                                <th>Documents & Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.partners.map(item => `
+                                <tr>
+                                    <td>${item.fullName || item.name || ''}</td>
+                                    <td><span class="badge ${approvalStatusClass(item.status)}">${item.status}</span></td>
+                                    <td>
+                                        <div class="action-cell">
+                                            <button class="btn js-preview" data-type="partner" data-id="${item.id}">Preview Docs</button>
+                                            <button class="btn success js-status" data-type="partner" data-id="${item.id}" data-status="Approved">Accept</button>
+                                            <button class="btn danger js-status" data-type="partner" data-id="${item.id}" data-status="Rejected">Reject</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `).join("")}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            const searchInput = document.querySelector(".table-wrap .table-search-input");
+            if (searchInput) {
+                searchInput.addEventListener("input", function() {
+                    const keyword = this.value.toLowerCase().trim();
+                    const rows = document.querySelectorAll(".table-wrap tbody tr");
+                    rows.forEach(row => {
+                        const text = row.textContent.toLowerCase();
+                        row.style.display = text.includes(keyword) ? "" : "none";
+                    });
+                });
+            }
+        }
+
+        /* ================= TOAST ================= */
+
+        function showToast(message) {
+            const toast = $("#toastBox");
+            if (!toast) return alert(message);
+            toast.textContent = message;
+            toast.classList.add("active");
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => toast.classList.remove("active"), 2500);
+        }
+
+        /* ================= DOWNLOAD HELPER ================= */
+
+        function downloadTextFile(filename, content) {
+            const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(link.href);
+        }
+
+        /* ================= ACTION MODAL ================= */
+
+        function openActionModal(title, subtitle, body) {
+            $("#actionTitle").textContent = title;
+            $("#actionSubtitle").textContent = subtitle;
+            $("#actionBody").innerHTML = body;
+            $("#actionModal").classList.add("active");
+        }
+
+        function closeActionModal() {
+            $("#actionModal")?.classList.remove("active");
+        }
+
+        function initActionModalClose() {
+            $("#closeActionModal")?.addEventListener("click", closeActionModal);
+            $("#actionModal")?.addEventListener("click", event => {
+                if (event.target.id === "actionModal") closeActionModal();
+            });
+        }
+
+        /* ================= FILTER, EXPORT, ADD BUTTONS ================= */
+
+        function initActionButtons() {
+            document.addEventListener("click", function(e) {
+                const filterBtn = e.target.closest("#filterBtn, [data-action='filter']");
+                if (filterBtn) {
+                    e.preventDefault();
+                    openActionModal("Filters", "Filter current module data", `
+                        <div class="form-grid">
+                            <input id="filterKeyword" placeholder="Search keyword / city / status">
+                            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                                <button class="btn primary" id="applyFilterBtn">Apply Filter</button>
+                                <button class="btn" id="clearFilterBtn">Clear Filter</button>
+                            </div>
+                        </div>
+                    `);
+
+                    document.getElementById("applyFilterBtn")?.addEventListener("click", function() {
+                        const keyword = document.getElementById("filterKeyword").value.toLowerCase().trim();
+                        const rows = document.querySelectorAll(".table-wrap tbody tr");
+                        let count = 0;
+                        rows.forEach(row => {
+                            const text = row.textContent.toLowerCase();
+                            if (text.includes(keyword)) {
+                                row.style.display = "";
+                                count++;
+                            } else {
+                                row.style.display = "none";
+                            }
+                        });
+                        closeActionModal();
+                        showToast(`${count} records found`);
+                    });
+
+                    document.getElementById("clearFilterBtn")?.addEventListener("click", function() {
+                        const rows = document.querySelectorAll(".table-wrap tbody tr");
+                        rows.forEach(row => row.style.display = "");
+                        closeActionModal();
+                        showToast("Filters cleared");
+                    });
+                }
+            });
+
+            document.addEventListener("click", function(e) {
+                const exportBtn = e.target.closest("#exportBtn, [data-action='export']");
+                if (exportBtn) {
+                    e.preventDefault();
+                    const activePage = document.querySelector(".nav-link.active")?.dataset.page || "dashboard";
+                    const rows = getRowsForPage(activePage);
+                    const keys = getKeysForPage(activePage);
+
+                    if (rows.length && keys.length) {
+                        const csv = [
+                            keys.join(","),
+                            ...rows.map(row => keys.map(key => `"${String(row[key] ?? "").replaceAll('"', '""')}"`).join(","))
+                        ].join("\n");
+                        downloadTextFile(`madfoods-${activePage}-export.csv`, csv);
+                        showToast(`Export downloaded!`);
+                    } else {
+                        const revenue = data.orders.reduce((sum, order) => sum + Number(order.amount || 0), 0);
+                        const summary =
+                            `MAD FOODS DASHBOARD REPORT\n\nRestaurants: ${data.restaurants.length}\nDelivery Partners: ${data.partners.length}\nOrders: ${data.orders.length}\nRevenue: ₹${revenue.toLocaleString("en-IN")}\n`;
+                        downloadTextFile("madfoods-dashboard-report.txt", summary);
+                        showToast("Report downloaded!");
+                    }
+                }
+            });
+
+            document.addEventListener("click", function(e) {
+                const addBtn = e.target.closest("[data-action='add']");
+                if (addBtn) {
+                    e.preventDefault();
+                    const type = addBtn.dataset.addType || "";
+                    openAddPanel(type);
+                }
+            });
+        }
+
+        function getRowsForPage(page) {
+            const map = {
+                restaurants: data.restaurants,
+                partners: data.partners,
+                catalog: data.foods,
+                orders: data.orders,
+                payments: data.payments,
+                coupons: data.coupons,
+            };
+            return map[page] || [];
+        }
+
+        function getKeysForPage(page) {
+            const map = {
+                restaurants: ["id", "name", "owner", "status"],
+                partners: ["id", "name", "status"],
+                catalog: ["name", "category", "restaurant", "price", "orders", "status"],
+                orders: ["id", "customer", "restaurant", "amount", "status", "payment"],
+                payments: ["txn", "order", "method", "amount", "status"],
+                coupons: ["code", "type", "discount", "used", "status"],
+            };
+            return map[page] || [];
+        }
+
+        function openAddPanel(forcedType = "") {
+            const page = forcedType || document.querySelector(".nav-link.active")?.dataset.page || "dashboard";
+            let body = "";
+            let title = "Add New Record";
+
+            if (page === "orders") {
+                title = "Add New Order";
+                body = `
+                    <div class="form-grid">
+                        <input id="addCustomer" placeholder="Customer name">
+                        <input id="addRestaurant" placeholder="Restaurant name">
+                        <input id="addAmount" placeholder="Amount (₹)" type="number">
+                        <select id="addStatus">
+                            <option value="Preparing">Preparing</option>
+                            <option value="Out for Delivery">Out for Delivery</option>
+                            <option value="Delivered">Delivered</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                        <select id="addPayment">
+                            <option value="Paid">Paid</option>
+                            <option value="COD">COD</option>
+                            <option value="Refunded">Refunded</option>
+                            <option value="Pending">Pending</option>
+                        </select>
+                        <button class="btn primary" id="saveNewRecordBtn">Save Order</button>
+                    </div>
+                `;
+            } else if (page === "payments") {
+                title = "Add New Payment";
+                body = `
+                    <div class="form-grid">
+                        <input id="addOrder" placeholder="Order ID (e.g. ORD-XXXXX)">
+                        <select id="addMethod">
+                            <option value="UPI">UPI</option>
+                            <option value="Card">Card</option>
+                            <option value="COD">COD</option>
+                            <option value="Wallet">Wallet</option>
+                        </select>
+                        <input id="addAmount" placeholder="Amount (₹)" type="number">
+                        <select id="addStatus">
+                            <option value="Success">Success</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Refunded">Refunded</option>
+                            <option value="Failed">Failed</option>
+                        </select>
+                        <button class="btn primary" id="saveNewRecordBtn">Save Payment</button>
+                    </div>
+                `;
+            } else if (page === "coupons") {
+                title = "Add New Coupon";
+                body = `
+                    <div class="form-grid">
+                        <input id="addCode" placeholder="Coupon code (e.g. SAVE50)">
+                        <input id="addType" placeholder="Offer type (e.g. Festival Offer)">
+                        <input id="addDiscount" placeholder="Discount (e.g. 50% or ₹100)">
+                        <input id="addUsed" placeholder="Times used" type="number" value="0">
+                        <select id="addStatus">
+                            <option value="Active">Active</option>
+                            <option value="Expired">Expired</option>
+                            <option value="Draft">Draft</option>
+                        </select>
+                        <button class="btn primary" id="saveNewRecordBtn">Save Coupon</button>
+                    </div>
+                `;
+            } else if (page === "restaurants") {
+                title = "Add Restaurant";
+                body = `
+                    <div class="form-grid">
+                        <input id="addName" placeholder="Restaurant name">
+                        <input id="addOwner" placeholder="Owner name">
+                        <button class="btn primary" id="saveNewRecordBtn">Save Restaurant</button>
+                    </div>
+                `;
+            } else if (page === "partners") {
+                title = "Add Delivery Partner";
+                body = `
+                    <div class="form-grid">
+                        <input id="addName" placeholder="Partner name">
+                        <button class="btn primary" id="saveNewRecordBtn">Save Partner</button>
+                    </div>
+                `;
+            } else if (page === "catalog") {
+                title = "Add Food Item";
+                body = `
+                    <div class="form-grid">
+                        <input id="addName" placeholder="Food name">
+                        <input id="addCategory" placeholder="Category (e.g. Biryani, Tiffins)">
+                        <input id="addRestaurant" placeholder="Restaurant name">
+                        <input id="addPrice" placeholder="Price (₹)" type="number">
+                        <select id="addStatus">
+                            <option value="Live">Live</option>
+                            <option value="Paused">Paused</option>
+                            <option value="Coming Soon">Coming Soon</option>
+                        </select>
+                        <button class="btn primary" id="saveNewRecordBtn">Save Food Item</button>
+                    </div>
+                `;
+            } else {
+                body = `
+                    <div class="form-grid">
+                        <input id="addName" placeholder="Record name">
+                        <button class="btn primary" id="saveNewRecordBtn">Save Record</button>
+                    </div>
+                `;
+            }
+
+            openActionModal(title, "Create a new entry", body);
+
+            document.getElementById("saveNewRecordBtn")?.addEventListener("click", function() {
+                const name = document.getElementById("addName")?.value?.trim() ||
+                    document.getElementById("addCustomer")?.value?.trim() ||
+                    document.getElementById("addCode")?.value?.trim();
+
+                if (page === "orders") {
+                    const customer = document.getElementById("addCustomer").value.trim();
+                    const restaurant = document.getElementById("addRestaurant").value.trim();
+                    const amount = parseFloat(document.getElementById("addAmount").value) || 0;
+                    const status = document.getElementById("addStatus").value;
+                    const payment = document.getElementById("addPayment").value;
+                    if (!customer || !restaurant) {
+                        showToast("Please enter customer and restaurant names");
+                        return;
+                    }
+                    data.orders.push({
+                        id: "ORD-" + String(Date.now()).slice(-5),
+                        customer: customer,
+                        restaurant: restaurant,
+                        amount: amount,
+                        status: status,
+                        payment: payment
+                    });
+                    localStorage.setItem("madFoodsDemo", JSON.stringify(data));
+                    closeActionModal();
+                    loadPage(page);
+                    showToast(`Order for ${customer} added!`);
+                    return;
+                }
+
+                if (page === "payments") {
+                    const order = document.getElementById("addOrder").value.trim();
+                    const method = document.getElementById("addMethod").value;
+                    const amount = parseFloat(document.getElementById("addAmount").value) || 0;
+                    const status = document.getElementById("addStatus").value;
+                    if (!order) {
+                        showToast("Please enter an Order ID");
+                        return;
+                    }
+                    data.payments.push({
+                        txn: "TXN-" + String(Date.now()).slice(-5),
+                        order: order,
+                        method: method,
+                        amount: amount,
+                        status: status
+                    });
+                    localStorage.setItem("madFoodsDemo", JSON.stringify(data));
+                    closeActionModal();
+                    loadPage(page);
+                    showToast(`Payment for ${order} added!`);
+                    return;
+                }
+
+                if (page === "coupons") {
+                    const code = document.getElementById("addCode").value.trim().toUpperCase();
+                    const type = document.getElementById("addType").value.trim() || "Offer";
+                    const discount = document.getElementById("addDiscount").value.trim() || "10%";
+                    const used = parseInt(document.getElementById("addUsed").value) || 0;
+                    const status = document.getElementById("addStatus").value;
+                    if (!code) {
+                        showToast("Please enter a coupon code");
+                        return;
+                    }
+                    data.coupons.push({
+                        code: code,
+                        type: type,
+                        discount: discount,
+                        used: used,
+                        status: status
+                    });
+                    localStorage.setItem("madFoodsDemo", JSON.stringify(data));
+                    closeActionModal();
+                    loadPage(page);
+                    showToast(`Coupon ${code} added!`);
+                    return;
+                }
+
+                if (page === "restaurants") {
+                    const name = document.getElementById("addName").value.trim();
+                    const owner = document.getElementById("addOwner").value.trim() || "New Owner";
+                    if (!name) {
+                        showToast("Please enter restaurant name");
+                        return;
+                    }
+                    data.restaurants.push({
+                        id: "R" + Math.floor(Math.random() * 90000 + 10000),
+                        name: name,
+                        owner: owner,
+                        status: "Pending",
+                        documents: { license: "Uploaded", gst: "Uploaded", ownerId: "Uploaded", menu: "Uploaded" }
+                    });
+                    localStorage.setItem("madFoodsDemo", JSON.stringify(data));
+                    closeActionModal();
+                    loadPage("restaurants");
+                    showToast(`Restaurant "${name}" added!`);
+                    return;
+                }
+
+                if (page === "partners") {
+                    const name = document.getElementById("addName").value.trim();
+                    if (!name) {
+                        showToast("Please enter partner name");
+                        return;
+                    }
+                    data.partners.push({
+                        id: "D" + Math.floor(Math.random() * 90000 + 10000),
+                        name: name,
+                        status: "Pending",
+                        documents: { aadhaar: "Uploaded", license: "Uploaded", address: "Uploaded" }
+                    });
+                    localStorage.setItem("madFoodsDemo", JSON.stringify(data));
+                    closeActionModal();
+                    loadPage("partners");
+                    showToast(`Partner "${name}" added!`);
+                    return;
+                }
+
+                if (page === "catalog") {
+                    const name = document.getElementById("addName").value.trim();
+                    const category = document.getElementById("addCategory").value.trim() || "General";
+                    const restaurant = document.getElementById("addRestaurant").value.trim() || "Mad Foods Kitchen";
+                    const price = parseFloat(document.getElementById("addPrice").value) || 99;
+                    const status = document.getElementById("addStatus").value;
+                    if (!name) {
+                        showToast("Please enter food name");
+                        return;
+                    }
+                    data.foods.push({
+                        name: name,
+                        category: category,
+                        restaurant: restaurant,
+                        price: price,
+                        orders: 0,
+                        status: status
+                    });
+                    localStorage.setItem("madFoodsDemo", JSON.stringify(data));
+                    closeActionModal();
+                    loadPage("catalog");
+                    showToast(`Food item "${name}" added!`);
+                    return;
+                }
+
+                if (!name) {
+                    showToast("Please enter a name");
+                    return;
+                }
+                showToast(`"${name}" added to ${page}! (Demo)`);
+                closeActionModal();
+            });
+        }
+
+        /* ================= EVENT DELEGATION ================= */
+
+        function initDelegatedEvents() {
+            document.addEventListener("click", function(e) {
+                const previewBtn = e.target.closest(".js-preview");
+                if (previewBtn) {
+                    e.preventDefault();
+                    openDocumentPreview(previewBtn.dataset.type, previewBtn.dataset.id);
+                }
+
+                const statusBtn = e.target.closest(".js-status");
+                if (statusBtn) {
+                    e.preventDefault();
+                    updateRequestStatus(statusBtn.dataset.type, statusBtn.dataset.id, statusBtn.dataset.status);
+                }
+
+                const answerBtn = e.target.closest(".js-answer-call");
+                if (answerBtn) {
+                    e.preventDefault();
+                    showToast("📞 Call connected!");
+                    answerBtn.textContent = "✅ Connected";
+                    answerBtn.removeAttribute('disabled');
+                    answerBtn.classList.remove("success");
+                    answerBtn.classList.add("warning");
+                }
+
+                const resolveBtn = e.target.closest(".js-resolve-ticket");
+                if (resolveBtn) {
+                    e.preventDefault();
+                    showToast("✅ Issue resolved!");
+                    const card = resolveBtn.closest(".support-card");
+                    if (card) card.style.opacity = "0.5";
+                    resolveBtn.textContent = "✅ Resolved";
+                    resolveBtn.removeAttribute('disabled');
+                }
+
+                const chatBtn = e.target.closest(".js-open-chat");
+                if (chatBtn) {
+                    e.preventDefault();
+                    const restaurant = chatBtn.dataset.restaurant;
+                    const topic = chatBtn.dataset.topic;
+                    const box = document.getElementById("chatPreview");
+                    if (box) {
+                        box.innerHTML = `
+                            <div class="chat-box">
+                                <b>💬 ${restaurant}</b>
+                                <div class="chat-message"><strong>Restaurant:</strong> ${topic}</div>
+                                <div class="chat-message"><strong>Admin:</strong> Hello! Mad Foods support here. How can we help?</div>
+                                <div style="display:flex;gap:8px;margin-top:10px;">
+                                    <input id="chatReply" placeholder="Type reply..." style="flex:1;padding:8px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;color:var(--text);">
+                                    <button class="btn primary" id="sendChatReply">Send</button>
+                                </div>
+                            </div>
+                        `;
+                        document.getElementById("sendChatReply")?.addEventListener("click", function() {
+                            const reply = document.getElementById("chatReply")?.value.trim();
+                            if (reply) {
+                                const msgs = document.querySelector(".chat-box");
+                                const newMsg = document.createElement("div");
+                                newMsg.className = "chat-message";
+                                newMsg.innerHTML = `<strong>Admin:</strong> ${reply}`;
+                                msgs.insertBefore(newMsg, msgs.lastElementChild);
+                                document.getElementById("chatReply").value = "";
+                                showToast("Reply sent!");
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        /* ================= NOTIFICATION BELL ================= */
+
+        function initNotificationBell() {
+            const bell = document.getElementById("notificationBell");
+            if (bell) {
+                bell.addEventListener("click", function() {
+                    const notifs = data.notifications || [];
+                    if (notifs.length) {
+                        const list = notifs.slice(0, 5).map(n =>
+                            `<div class="live-item" style="border-left-color:var(--info);">
+                                <div><b>${n.title}</b><div class="tiny muted">${n.message}</div></div>
+                                <span class="badge ${badgeClass(n.status)}">${n.status}</span>
+                            </div>`
+                        ).join("");
+                        openActionModal("🔔 Notifications", "Recent notifications", list || '<p class="muted">No notifications</p>');
+                    } else {
+                        showToast("No new notifications");
+                    }
+                });
+            }
+        }
+
+        /* ================= GLOBAL SEARCH ================= */
+
+        function initGlobalSearch() {
+            const search = document.getElementById("globalSearch");
+            if (search) {
+                search.addEventListener("keydown", function(e) {
+                    if (e.key === "Enter") {
+                        const keyword = this.value.trim().toLowerCase();
+                        if (!keyword) {
+                            showToast("Enter a search term");
+                            return;
+                        }
+
+                        let results = [];
+                        Object.keys(data).forEach(key => {
+                            if (Array.isArray(data[key])) {
+                                data[key].forEach(item => {
+                                    const match = Object.values(item).some(val =>
+                                        String(val).toLowerCase().includes(keyword)
+                                    );
+                                    if (match) results.push({ module: key, item: item });
+                                });
+                            }
+                        });
+
+                        if (results.length) {
+                            const resultHtml = results.slice(0, 10).map(r =>
+                                `<div class="live-item" style="border-left-color:var(--info);">
+                                    <div><b>${r.module}</b><div class="tiny muted">${Object.values(r.item).join(" • ")}</div></div>
+                                </div>`
+                            ).join("");
+                            openActionModal(`🔍 Search Results (${results.length})`, `Found ${results.length} matches for "${keyword}"`,
+                                resultHtml);
+                        } else {
+                            showToast(`No results found for "${keyword}"`);
+                        }
+                    }
+                });
+            }
+        }
+
+        /* ================= ENABLE ALL BUTTONS ================= */
+        function enableAllButtons() {
+            // Remove disabled attribute from all buttons
+            document.querySelectorAll('button[disabled]').forEach(btn => {
+                btn.removeAttribute('disabled');
+            });
+            
+            // Also handle any buttons that might be disabled via class or style
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+                btn.disabled = false;
+            });
+            
+            // Enable all icon buttons
+            document.querySelectorAll('.icon-btn').forEach(btn => {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+            });
+        }
+
+        /* ================= INIT ================= */
+
+        function init() {
+            initAuth();
+            initNavigation();
+            initTheme();
+            initMobile();
+            initProfileUpload();
+            initDocumentModal();
+            initActionModalClose();
+            initActionButtons();
+            initDelegatedEvents();
+            initNotificationBell();
+            initGlobalSearch();
+            
+            // Auto login check
+            const savedToken = localStorage.getItem('mad_token');
+            const savedUserStr = localStorage.getItem('mad_user');
+            if (savedToken && savedUserStr) {
+                const user = JSON.parse(savedUserStr);
+                if (user.role === 'ADMIN') {
+                    $("#loginScreen").classList.add("hidden");
+                    $("#appShell").classList.remove("hidden");
+                    syncAdminData().then(() => {
+                        loadPage("dashboard");
+                    });
+                }
+            }
+
+            // Enable all buttons after everything is loaded
+            setTimeout(enableAllButtons, 100);
+        }
+
+        function initDocumentModal() {
+            const closeBtn = document.getElementById("closeDocModal");
+            if (closeBtn) {
+                closeBtn.addEventListener("click", closeDocumentPreview);
+            }
+            const modal = document.getElementById("docModal");
+            if (modal) {
+                modal.addEventListener("click", function(e) {
+                    if (e.target === this) closeDocumentPreview();
+                });
+            }
+        }
+
+        const originalLoadPage = loadPage;
+        loadPage = function(page) {
+            originalLoadPage(page);
+
+            setTimeout(() => {
+                document.querySelectorAll(".table-search-input").forEach(input => {
+                    input.addEventListener("input", function() {
+                        const keyword = this.value.toLowerCase().trim();
+                        const rows = this.closest(".table-wrap")?.querySelectorAll("tbody tr") || [];
+                        rows.forEach(row => {
+                            const text = row.textContent.toLowerCase();
+                            row.style.display = text.includes(keyword) ? "" : "none";
+                        });
+                    });
+                });
+                
+                // Re-enable buttons after page load
+                enableAllButtons();
+            }, 100);
+        };
+
+        document.addEventListener("DOMContentLoaded", init);
+    </script>
+
+</body>
+
+</html>
