@@ -2226,22 +2226,63 @@
 
         function renderActiveOrders() {
             const tbody = document.getElementById('activeOrdersBody');
-            const active = orders.filter(o => ['new','preparing','ready','delivery'].includes(o.status));
+            const active = orders.filter(o => ['new','preparing','ready','delivery'].includes(o.status.toLowerCase()));
             tbody.innerHTML = '';
             if (active.length === 0) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--md-on-surface-variant);font-weight:600;">No active orders</td></tr>`; return; }
             active.forEach((order, idx) => {
-                tbody.innerHTML += `<tr style="animation:slideInLeft ${0.2 + idx * 0.06}s ease forwards;"><td><strong>${order.id}</strong></td><td>${order.customer}</td><td>${order.items}</td><td>₹${order.total}</td><td><span class="status-badge ${order.status}">${order.status}</span></td><td><button class="btn-sm btn-edit" onclick="updateOrderStatus('${order.id}')"><i class="fa-solid fa-pen"></i></button></td></tr>`;
+                let actionBtn = '';
+                const currentStatus = order.status.toLowerCase();
+                
+                if (currentStatus === 'new') {
+                    actionBtn = `<button class="btn-sm success" onclick="updateOrderStatus('${order.id}', 'preparing')" style="background:#22c55e;color:white;border:none;padding:6px 12px;border-radius:6px;font-weight:700;cursor:pointer;"><i class="fa-solid fa-check"></i> Accept Order</button>`;
+                } else if (currentStatus === 'preparing') {
+                    actionBtn = `<button class="btn-sm warning" onclick="updateOrderStatus('${order.id}', 'ready')" style="background:#eab308;color:white;border:none;padding:6px 12px;border-radius:6px;font-weight:700;cursor:pointer;"><i class="fa-solid fa-utensils"></i> Mark Ready</button>`;
+                } else if (currentStatus === 'ready') {
+                    actionBtn = `<span style="font-size:0.8rem;color:#3b82f6;font-weight:700;"><i class="fa-solid fa-clock"></i> Waiting for Partner</span>`;
+                } else if (currentStatus === 'delivery') {
+                    actionBtn = `<span style="font-size:0.8rem;color:#8b5cf6;font-weight:700;"><i class="fa-solid fa-truck-fast"></i> In Transit</span>`;
+                } else {
+                    actionBtn = `<span style="font-size:0.8rem;color:#6b7280;font-weight:700;">Active</span>`;
+                }
+
+                tbody.innerHTML += `
+                    <tr style="animation:slideInLeft ${0.2 + idx * 0.06}s ease forwards;">
+                        <td><strong>${order.id}</strong></td>
+                        <td>${order.customer}</td>
+                        <td>${order.items}</td>
+                        <td>₹${order.total}</td>
+                        <td><span class="status-badge ${order.status.toLowerCase()}">${order.status}</span></td>
+                        <td>${actionBtn}</td>
+                    </tr>
+                `;
             });
         }
 
-        function updateOrderStatus(id) {
+        function updateOrderStatus(id, nextStatus) {
             const order = orders.find(o => o.id === id);
             if (!order) return;
-            const statuses = ['new','preparing','ready','delivery','completed'];
-            const idx = statuses.indexOf(order.status);
-            order.status = statuses[(idx + 1) % statuses.length];
-            renderActiveOrders(); renderOrders(); renderRecentOrders();
-            showToast(`Order ${id} updated`, '🔄');
+
+            if (!nextStatus) {
+                const statuses = ['new','preparing','ready','delivery','completed'];
+                const idx = statuses.indexOf(order.status.toLowerCase());
+                nextStatus = statuses[(idx + 1) % statuses.length];
+            }
+
+            // Sync to backend DB if integration script is loaded
+            if (window.updateOrderStatusInDb) {
+                window.updateOrderStatusInDb(order.numericId, nextStatus)
+                    .then(() => {
+                        order.status = nextStatus;
+                        renderActiveOrders(); renderOrders(); renderRecentOrders();
+                    })
+                    .catch(err => {
+                        console.error("Order status update failed: ", err);
+                    });
+            } else {
+                order.status = nextStatus;
+                renderActiveOrders(); renderOrders(); renderRecentOrders();
+                showToast(`Order ${id} updated to ${nextStatus}`, '🔄');
+            }
         }
 
         function renderCompletedOrders() {
